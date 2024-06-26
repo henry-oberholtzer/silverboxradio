@@ -1,7 +1,6 @@
 from flask import Flask
 from flask_smorest import Api
 
-from resources.schedule import blp as SeasonBlueprint
 
 app = Flask(__name__)
 
@@ -15,4 +14,6 @@ app.config["OPENAPI_SWAGGER_UI_URL"] = "https://cdn.jsdelivr.net/npm/swagger-ui-
 
 api = Api(app)
 
-api.register_blueprint(SeasonBlueprint)
+from api.shows import blp as ShowBlueprint
+
+api.register_blueprint(ShowBlueprint)

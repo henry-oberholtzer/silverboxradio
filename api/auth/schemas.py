@@ -37,9 +37,17 @@ class UserRegisterSchema(UserSchema):
     if re.fullmatch(r"[\w\!\@\#\$\%\^\&\*]{8,}", password) is None:
       raise ValidationError("Passwords must be at least 8 characters, contain at least one number, and one special character (!, @, #, $, %, ^, &, *).")
 
-class UserUpdateSchema(UserSchema):
+class UserUpdateSchema(UserRegisterSchema):
+  email = fields.Email(required=False)
+  username = fields.Str(required=False, validate=validate.Length(min=1, max=30))
+  is_admin = fields.Bool(required=False)
+  
   class Meta:
-    exclude = ["id", "created_at", "password"]
+    exclude = ["password"]
+
+class UserLoginSchema(UserSchema):
+  class Meta:
+    fields = ["username", "password"]
 
 class UserPasswordUpdateSchema(UserSchema):
   pass

@@ -6,7 +6,7 @@ from datetime import datetime
 
 from db import db
 from auth.models import UserModel
-from auth.schemas import UserPasswordUpdateSchema, UserSchema, UserRegisterSchema, UserUpdateSchema
+from auth.schemas import UserLoginSchema, UserPasswordUpdateSchema, UserSchema, UserRegisterSchema, UserUpdateSchema
 
 blp = Blueprint("Users", "users", description="Operations on users")
 
@@ -31,7 +31,7 @@ class UserRegister(MethodView):
 @blp.route("/login")
 class UserLogin(MethodView):
   
-  @blp.arguments(UserSchema)
+  @blp.arguments(UserLoginSchema)
   def post(self, user_data):
     user = UserModel.query.filter(
       UserModel.username == user_data["username"]
@@ -53,7 +53,7 @@ class UserChangePassword(MethodView):
 @blp.route("/users")
 class UserList(MethodView):
   
-  @blp.response(200, UserSchema)
+  @blp.response(200, UserSchema(many=True))
   def get(self):
     return UserModel.query.all()
 
@@ -76,12 +76,16 @@ class User(MethodView):
   def put(self, user_data, user_id):
     user = db.get_or_404(UserModel, user_id)
     if user:
-      user.username = user_data["username"]
-      user.email = user_data["email"]
+      if "username" in user_data:
+        user.username = user_data["username"]
+      if "email" in user_data:
+        user.email = user_data["email"]
+      if "is_admin" in user_data:
+        user.is_admin = user_data["is_admin"]
     else:
       user = UserModel(id=user_id, **user_data)
     
     db.session.add(user)
     db.session.commit()
-      
+    return user
       

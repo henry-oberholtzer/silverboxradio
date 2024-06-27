@@ -2,6 +2,7 @@ from flask import request
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 from sqlalchemy.exc import SQLAlchemyError
+from flask_jwt_extended import jwt_required
 from schedule.models import EpisodeModel
 from schedule.schemas import EpisodeSchema, EpisodeUpdateSchema
 
@@ -19,6 +20,7 @@ class EpisodeList(MethodView):
 
   @blp.arguments(EpisodeSchema)
   @blp.response(201, EpisodeSchema)
+  @jwt_required()
   def post(self, episode_data):
     episode = EpisodeModel(**episode_data)
     
@@ -38,6 +40,7 @@ class Episode(MethodView):
     return episode
 
   @blp.response(204)
+  @jwt_required()
   def delete(self, episode_id):
     episode = db.get_or_404(EpisodeModel, episode_id)
     db.session.delete(episode)
@@ -45,6 +48,7 @@ class Episode(MethodView):
   
   @blp.arguments(EpisodeUpdateSchema)
   @blp.response(200, EpisodeSchema)
+  @jwt_required()
   def put(self, episode_data, episode_id):
     episode = db.get_or_404(EpisodeModel, episode_id)
     if episode:

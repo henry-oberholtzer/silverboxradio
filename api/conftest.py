@@ -1,4 +1,5 @@
 from flask import Flask
+from flask.testing import FlaskClient
 import pytest
 from app import create_app
 from db import db
@@ -24,3 +25,20 @@ def client(app: Flask):
 @pytest.fixture()
 def runner(app: Flask):
   return app.test_cli_runner()
+
+@pytest.fixture()
+def auth(client: FlaskClient):
+  with client:
+    client.post("/register", json={
+      "username": "user",
+      "password": "t3st_password!",
+      "email": "test@henryoberholtzer.com",
+    })
+    r = client.post("/login", json={
+      "username": "user",
+      "password": "t3st_password!",
+    })
+    token = r.get_json()["access_token"]
+    return {
+      "Authorization": f"Bearer {token}",
+    }

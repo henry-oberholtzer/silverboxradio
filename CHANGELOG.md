@@ -1,5 +1,7 @@
 6-26-24
-  - Write tests for shows, shows test
+  - Basic structure started.
+  - Write tests for shows
+  - Write tests for episodes
 
 TO DO:
   - Add user authentication

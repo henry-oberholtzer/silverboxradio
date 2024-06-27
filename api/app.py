@@ -9,6 +9,8 @@ from db import db
 from schedule.blueprints import EpisodesBlueprint, ShowsBlueprint
 from auth.blueprints import UsersBlueprint
 
+
+
 def create_app(db_url=None):
   app = Flask(__name__)
   app.config["PROPAGATE_EXCEPTIONS"] = True
@@ -26,6 +28,8 @@ def create_app(db_url=None):
   jwt = JWTManager(app)
 
   with app.app_context():
+    import schedule.models
+    import auth.models
     db.create_all()
 
   api.register_blueprint(ShowsBlueprint)

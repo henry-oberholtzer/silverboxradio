@@ -1,5 +1,9 @@
 from datetime import datetime
-from marshmallow import fields, Schema, validate
+from marshmallow import ValidationError, fields, Schema, validate, validates
+from sqlalchemy import select
+from .models.user import UserModel
+import re
+from db import db
 
 class UserSchema(Schema):
   id = fields.Int(dump_only=True)
@@ -8,10 +12,30 @@ class UserSchema(Schema):
   created_at = fields.DateTime(dump_only=True, load_default=datetime.now())
   email = fields.Email(required=True)
   is_admin = fields.Bool(load_default=False)
+  
 
 class UserRegisterSchema(UserSchema):
   class Meta:
     exclude = ["is_admin", "created_at"]
+  
+  @validates("email")
+  def validates_email(self, email):
+    stmt = select(UserModel).filter_by(email=email)
+    if db.session.scalars(stmt).all():
+      raise ValidationError("Email already registered.")
+  
+  @validates("username")
+  def validates_username(self, username):
+    if re.fullmatch(r"\w+", username) is None:
+      raise ValidationError("Username may only contain letters, numbers and underscores.")
+    stmt = select(UserModel).filter_by(username=username)
+    if db.session.scalars(stmt).all():
+      raise ValidationError("Username already registered.")
+  
+  @validates("password")
+  def validates_password(self, password):
+    if re.fullmatch(r"[\w\!\@\#\$\%\^\&\*]{8,}", password) is None:
+      raise ValidationError("Passwords must be at least 8 characters, contain at least one number, and one special character (!, @, #, $, %, ^, &, *).")
 
 class UserUpdateSchema(UserSchema):
   class Meta:

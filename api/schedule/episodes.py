@@ -37,19 +37,19 @@ class Episode(MethodView):
   
   @blp.response(200, EpisodeSchema)
   def get(self, episode_id):
-    episode = db.get_or_404(episode_id)
+    episode = db.get_or_404(EpisodeModel, episode_id)
     return episode
 
   @blp.response(204)
   def delete(self, episode_id):
-    episode = db.get_or_404(episode_id)
+    episode = db.get_or_404(EpisodeModel, episode_id)
     db.session.delete(episode)
     db.session.commit()
   
   @blp.arguments(EpisodeUpdateSchema)
   @blp.response(200, EpisodeSchema)
   def put(self, episode_data, episode_id):
-    episode = db.get_or_404(episode_id)
+    episode = db.get_or_404(EpisodeModel, episode_id)
     if episode:
       episode.name = episode_data["name"]
       episode.date = episode_data["date"]
@@ -58,4 +58,3 @@ class Episode(MethodView):
     
     db.session.add(episode)
     db.session.commit()
-  

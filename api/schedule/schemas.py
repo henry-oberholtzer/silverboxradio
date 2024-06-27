@@ -7,8 +7,14 @@ from .models import ShowModel
 
 class PlainEpisodeSchema(Schema):
   id = fields.Int(dump_only=True)
+  show_id = fields.Int(required=True, load_only=True)
   name = fields.Str(validate=validate.Length(min=1, max= 100))
   date = fields.Date()
+  
+  @validates("show_id")
+  def validates_show_id(self, show_id):
+    if db.session.get(ShowModel, show_id) is None:
+      raise ValidationError("Show does not exist.")
   
 class PlainShowSchema(Schema):
   id = fields.Int(dump_only=True)
@@ -29,13 +35,9 @@ class ShowUpdateSchema(PlainShowSchema):
 # Nested Schemas
 
 class EpisodeSchema(PlainEpisodeSchema):
-  show_id = fields.Int(required=True, load_only=True)
   show = fields.Nested(PlainShowSchema(), dump_only=True)
   
-  @validates("show_id")
-  def validates_show_id(self, show_id):
-    if db.session.get(ShowModel, show_id) is None:
-      raise ValidationError("Show does not exist.")
+
     
   
 

@@ -1,4 +1,3 @@
-import os
 from flask import Flask
 import pytest
 from app import create_app

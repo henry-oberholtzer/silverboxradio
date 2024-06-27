@@ -2,8 +2,8 @@ from flask import request
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 from sqlalchemy.exc import SQLAlchemyError
-from .schemas import EpisodeSchema, EpisodeUpdateSchema
-from .models import EpisodeModel
+from schedule.models import EpisodeModel
+from schedule.schemas import EpisodeSchema, EpisodeUpdateSchema
 
 from db import db
 

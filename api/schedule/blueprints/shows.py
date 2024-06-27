@@ -1,8 +1,8 @@
 from flask import session
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
-from .schemas import ShowSchema, ShowUpdateSchema
-from .models import ShowModel
+from schedule.models import ShowModel
+from schedule.schemas import ShowSchema, ShowUpdateSchema
 from sqlalchemy.exc import SQLAlchemyError
 
 from db import db

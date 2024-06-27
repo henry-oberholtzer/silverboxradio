@@ -36,10 +36,6 @@ class ShowUpdateSchema(PlainShowSchema):
 
 class EpisodeSchema(PlainEpisodeSchema):
   show = fields.Nested(PlainShowSchema(), dump_only=True)
-  
-
-    
-  
 
 class ShowSchema(PlainShowSchema):
   episodes = fields.List(fields.Nested(PlainEpisodeSchema()), dump_only=True)

@@ -1,5 +1,6 @@
 from flask import session
 from flask.views import MethodView
+from flask_jwt_extended import jwt_required
 from flask_smorest import Blueprint, abort
 from schedule.models import ShowModel
 from schedule.schemas import ShowSchema, ShowUpdateSchema
@@ -20,6 +21,7 @@ class ShowList(MethodView):
 
   @blp.response(201, ShowSchema)
   @blp.arguments(ShowSchema)
+  @jwt_required()
   def post(self, show_data):
     
     show = ShowModel(**show_data)
@@ -41,6 +43,7 @@ class Show(MethodView):
     return show
 
   @blp.response(204)
+  @jwt_required()
   def delete(self, show_id):
     show = db.get_or_404(ShowModel, show_id)
     db.session.delete(show)
@@ -48,6 +51,7 @@ class Show(MethodView):
     
   @blp.arguments(ShowUpdateSchema)
   @blp.response(200, ShowSchema)
+  @jwt_required()
   def put(self, show_data, show_id):
     show = db.get_or_404(ShowModel, show_id)
     if show:

@@ -28,9 +28,6 @@ class EpisodeList(MethodView):
     except SQLAlchemyError:
       abort(500, message="An error occurred creating the episode.")
     return episode
-    
-  
-  
 
 @blp.route("/episodes/<int:episode_id>")
 class Episode(MethodView):

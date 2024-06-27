@@ -1,10 +1,11 @@
 from flask.views import MethodView
+from flask_jwt_extended import create_access_token
 from flask_smorest import Blueprint, abort
 from passlib.hash import pbkdf2_sha256
 
 from db import db
 from auth.models import UserModel
-from auth.schemas import UserSchema, UserRegisterSchema
+from auth.schemas import UserPasswordUpdateSchema, UserSchema, UserRegisterSchema, UserUpdateSchema
 
 blp = Blueprint("Users", "users", description="Operations on users")
 
@@ -27,6 +28,28 @@ class UserRegister(MethodView):
     
     return {"message": "Registration successful."}, 201
 
+@blp.route("/login")
+class UserLogin(MethodView):
+  
+  @blp.arguments(UserSchema)
+  def post(self, user_data):
+    user = UserModel.query.filter(
+      UserModel.username == user_data["username"]
+    ).first()
+    
+    if user and pbkdf2_sha256.verify(user_data["password"], user.password):
+      access_token = create_access_token(identity=user.id)
+      return { "access_token": access_token }, 200
+    
+    abort(401, message="Invalid credentials.")
+
+@blp.route("/change-password")
+class UserChangePassword(MethodView):
+  
+  @blp.arguments(UserPasswordUpdateSchema)
+  def put(self, password_data, user_id):
+    return { "Not implemented" }, 501
+
 @blp.route("/users")
 class UserList(MethodView):
   
@@ -48,11 +71,17 @@ class User(MethodView):
     db.session.delete(user)
     db.session.commit()
   
-  @blp.arguments(UserSchema)
+  @blp.arguments(UserUpdateSchema)
   @blp.response(200, UserSchema)
   def put(self, user_data, user_id):
     user = db.get_or_404(UserModel, user_id)
     if user:
       user.username = user_data["username"]
       user.email = user_data["email"]
+    else:
+      user = UserModel(id=user_id, **user_data)
+    
+    db.session.add(user)
+    db.session.commit()
+      
       

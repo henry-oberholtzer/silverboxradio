@@ -37,20 +37,19 @@ class Show(MethodView):
   
   @blp.response(200, ShowSchema)
   def get(self, show_id):
-    show = db.session.get(ShowModel, show_id)
+    show = db.get_or_404(ShowModel, show_id)
     return show
 
   @blp.response(204)
   def delete(self, show_id):
-    show = db.session.get(ShowModel, show_id)
+    show = db.get_or_404(ShowModel, show_id)
     db.session.delete(show)
     db.session.commit()
-    return
     
   @blp.arguments(ShowUpdateSchema)
   @blp.response(200, ShowSchema)
   def put(self, show_data, show_id):
-    show = db.session.get(ShowModel, show_id)
+    show = db.get_or_404(ShowModel, show_id)
     if show:
       show.name = show_data["name"]
       show.description = show_data["description"]

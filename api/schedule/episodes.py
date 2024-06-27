@@ -32,24 +32,24 @@ class EpisodeList(MethodView):
   
   
 
-@blp.route("/episodes/<string:episode_id>")
+@blp.route("/episodes/<int:episode_id>")
 class Episode(MethodView):
   
   @blp.response(200, EpisodeSchema)
   def get(self, episode_id):
-    episode = EpisodeModel.query.get_or_404(episode_id)
+    episode = db.get_or_404(episode_id)
     return episode
 
   @blp.response(204)
   def delete(self, episode_id):
-    episode = EpisodeModel.query.get_or_404(episode_id)
+    episode = db.get_or_404(episode_id)
     db.session.delete(episode)
     db.session.commit()
   
   @blp.arguments(EpisodeUpdateSchema)
   @blp.response(200, EpisodeSchema)
   def put(self, episode_data, episode_id):
-    episode = EpisodeModel.query.get(episode_id)
+    episode = db.get_or_404(episode_id)
     if episode:
       episode.name = episode_data["name"]
       episode.date = episode_data["date"]

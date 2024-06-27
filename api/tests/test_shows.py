@@ -1,6 +1,4 @@
 from flask.testing import FlaskClient
-from schedule.models import EpisodeModel
-from db import db
 
 def test_get_shows(client: FlaskClient):
   with client:
@@ -95,3 +93,13 @@ def test_get_show_by_id(client: FlaskClient):
     json = response.get_json()
     get = client.get("/shows/1").get_json()
     assert get == json
+
+def test_get_show_by_id_doesnt_exist(client: FlaskClient):
+  with client:
+    get = client.get("/shows/1")
+    assert get.status_code == 404
+
+def test_delete_show_by_id_doesnt_exist(client: FlaskClient):
+  with client:
+    get = client.delete("/shows/1")
+    assert get.status_code == 404

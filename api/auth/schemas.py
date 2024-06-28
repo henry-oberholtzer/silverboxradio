@@ -4,25 +4,21 @@ from sqlalchemy import select
 from .models.user import UserModel
 import re
 from db import db
+from lib.validators import validate_email, validate_invite_email, validate_user_email
 
 class UserSchema(Schema):
   id = fields.Int(dump_only=True)
   username = fields.Str(required=True, validate=validate.Length(min=1, max=30))
   password = fields.Str(required=True, validate=validate.Length(min=1, max=30), load_only=True)
-  created_at = fields.DateTime(dump_only=True, load_default=datetime.now())
-  email = fields.Email(required=True)
+  created_at = fields.DateTime(dump_only=True)
+  updated_at = fields.DateTime(dump_only=True)
+  email = fields.Email(required=True, validate=validate_user_email)
   is_admin = fields.Bool(load_default=False)
   
 
 class UserRegisterSchema(UserSchema):
   class Meta:
     exclude = ["is_admin", "created_at"]
-  
-  @validates("email")
-  def validates_email(self, email):
-    stmt = select(UserModel).filter_by(email=email)
-    if db.session.scalars(stmt).all():
-      raise ValidationError("Email already registered.")
   
   @validates("username")
   def validates_username(self, username):
@@ -44,6 +40,10 @@ class UserUpdateSchema(UserRegisterSchema):
   
   class Meta:
     exclude = ["password"]
+    
+class UserPublicSchema(UserSchema):
+  class Meta:
+    fields = ["id", "username", "is_admin"]
 
 class UserLoginSchema(UserSchema):
   class Meta:
@@ -53,3 +53,13 @@ class UserPasswordUpdateSchema(UserSchema):
   pass
   # class Meta:
   #   include = ["password"]
+
+class InviteSchema(Schema):
+  id = fields.Int(dump_only=True)
+  email = fields.Email(required=True, validate=validate_invite_email)
+  owner = fields.Nested(UserPublicSchema(), dump_only=True)
+  owner_id = fields.Int(required=True)
+  created_at = fields.DateTime(dump_only=True)
+
+class InvitePostSchema(Schema):
+  email = fields.Email(required=True, validate=validate_invite_email)

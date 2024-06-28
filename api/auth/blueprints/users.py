@@ -1,9 +1,11 @@
+import string
 from flask.views import MethodView
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, get_jwt, get_jwt_identity
 from flask_smorest import Blueprint, abort
 from passlib.hash import pbkdf2_sha256
 from datetime import datetime
-
+from flask_jwt_extended import jwt_required
+from lib.permissions import is_user_or_admin
 from db import db
 from auth.models import UserModel
 from auth.schemas import UserLoginSchema, UserPasswordUpdateSchema, UserSchema, UserRegisterSchema, UserUpdateSchema
@@ -20,7 +22,6 @@ class UserRegister(MethodView):
       username=user_data["username"],
       email=user_data["email"],
       password=pbkdf2_sha256.hash(user_data["password"]),
-      created_at=datetime.now(),
       is_admin=False
     )
     db.session.add(user)
@@ -47,13 +48,16 @@ class UserLogin(MethodView):
 class UserChangePassword(MethodView):
   
   @blp.arguments(UserPasswordUpdateSchema)
+  @jwt_required()
   def put(self, password_data, user_id):
+    is_user_or_admin(user_id)
     return { "Not implemented" }, 501
 
 @blp.route("/users")
 class UserList(MethodView):
   
   @blp.response(200, UserSchema(many=True))
+  @jwt_required()
   def get(self):
     return UserModel.query.all()
 
@@ -61,19 +65,25 @@ class UserList(MethodView):
 class User(MethodView):
   
   @blp.response(200, UserSchema)
+  @jwt_required()
   def get(self, user_id):
     user = db.get_or_404(UserModel, user_id)
     return user
   
   @blp.response(204)
+  @jwt_required()
   def delete(self, user_id):
+    is_user_or_admin(user_id)
     user = db.get_or_404(UserModel, user_id)
     db.session.delete(user)
     db.session.commit()
   
   @blp.arguments(UserUpdateSchema)
   @blp.response(200, UserSchema)
+  @jwt_required()
   def put(self, user_data, user_id):
+    is_user_or_admin(user_id)
+    
     user = db.get_or_404(UserModel, user_id)
     if user:
       if "username" in user_data:

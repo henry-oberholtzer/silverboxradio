@@ -1,8 +1,10 @@
 from flask import Flask
 from flask.testing import FlaskClient
+from auth.models.user import UserModel
+from db import db
+from passlib.hash import pbkdf2_sha256
 import pytest
 from app import create_app
-from db import db
 
 @pytest.fixture()
 def app():
@@ -32,11 +34,31 @@ def auth(client: FlaskClient):
     client.post("/register", json={
       "username": "user",
       "password": "t3st_password!",
-      "email": "test@henryoberholtzer.com",
+      "email": "user@henryoberholtzer.com",
     })
     r = client.post("/login", json={
       "username": "user",
       "password": "t3st_password!",
+    })
+    token = r.get_json()["access_token"]
+    return {
+      "Authorization": f"Bearer {token}",
+    }
+
+@pytest.fixture
+def admin(client: FlaskClient):
+  with client:
+    admin = UserModel(
+      username="admin",
+      email="admin@admin.com",
+      password=pbkdf2_sha256.hash("admin"),
+      is_admin=True
+    )
+    db.session.add(admin)
+    db.session.commit()
+    r = client.post("/login", json={
+      "username": "admin",
+      "password": "admin"
     })
     token = r.get_json()["access_token"]
     return {

@@ -113,52 +113,50 @@ def test_user_login_invalid(client: FlaskClient, register_user):
     })
     assert r.status_code == 401
 
-def test_user_get_all(client: FlaskClient, register_user):
+def test_user_get_all(client: FlaskClient, auth):
   with client:
     client.post("/register", json={
       "username": "test_2",
       "password": "t3st_password!",
       "email": "test2@henryoberholtzer.com",
     })
-    r = client.get("/users")
-    assert r.get_json()[0]["username"] == "test"
+    r = client.get("/users", headers=auth)
+    assert r.get_json()[0]["username"] == "user"
     assert r.get_json()[1]["username"] == "test_2"
 
-def test_user_get_by_id(client: FlaskClient, register_user):
+def test_user_get_by_id(client: FlaskClient, auth):
   with client:
-    r = client.get("/users/1")
-    assert r.get_json()["username"] == "test"
+    r = client.get("/users/1", headers=auth)
+    assert r.get_json()["username"] == "user"
 
-def test_user_get_by_id_dne(client: FlaskClient, register_user):
+def test_user_get_by_id_dne(client: FlaskClient, auth):
   with client:
-    r = client.get("/users/2")
+    r = client.get("/users/2", headers=auth)
     assert r.status_code == 404
 
-def test_delete_user(client: FlaskClient, register_user):
+def test_delete_user(client: FlaskClient, auth):
   with client:
-    r = client.delete("/users/1")
+    r = client.delete("/users/1", headers=auth)
     assert r.status_code == 204
 
-def test_put_user_username(client: FlaskClient, register_user):
+def test_put_user_username(client: FlaskClient, auth):
   with client:
-    r = client.put("/users/1", json={
+    r = client.put("/users/1", headers=auth, json={
       "username": "henry",
     })
-    print(r.get_json())
     assert r.status_code == 200
     assert r.get_json()["username"] == "henry"
 
-def test_put_user_username_invalid(client: FlaskClient, register_user):
+def test_put_user_username_invalid(client: FlaskClient, auth):
   with client:
-    r = client.put("/users/1", json={
+    r = client.put("/users/1", headers=auth, json={
       "username": "henry!",
     })
-    print(r.get_json())
     assert r.status_code == 422
 
-def test_put_user_username_and_email(client: FlaskClient, register_user):
+def test_put_user_username_and_email(client: FlaskClient, auth):
   with client:
-    r = client.put("/users/1", json={
+    r = client.put("/users/1", headers=auth, json={
       "username": "henry",
       "email": "mynewemail@email.com"
     })
@@ -166,10 +164,26 @@ def test_put_user_username_and_email(client: FlaskClient, register_user):
     assert r.get_json()["username"] == "henry"
     assert r.get_json()["email"] == "mynewemail@email.com"
 
-def test_set_user_admin(client: FlaskClient, register_user):
+def test_set_user_admin(client: FlaskClient, auth):
   with client:
-    r = client.put("/users/1", json={
+    r = client.put("/users/1", headers=auth, json={
       "is_admin": True,
     })
     assert r.status_code == 200
     assert r.get_json()["is_admin"] == True
+    
+def test_only_allow_user_to_adjust_profile(client: FlaskClient, register_user):
+  with client:
+    client.post("/register", json={
+      "username": "test_auth",
+      "password": "t3st_password!",
+      "email": "test1@henryoberholtzer.com",
+    })
+    auth_user = client.post("/login", json={
+      "username": "test_auth",
+      "password": "t3st_password!"
+    })
+    r = client.put("/users/1", headers=auth_user.get_json(), json={
+      "username": "change_that",  
+    })
+    assert r.status_code == 401

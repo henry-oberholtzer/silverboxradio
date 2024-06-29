@@ -8,7 +8,7 @@ from flask_jwt_extended import jwt_required
 from sqlalchemy import select
 from lib.permissions import admin_only, is_user_or_admin
 from db import db
-from auth.models import UserModel, InviteModel
+from auth.models import UserModel, InviteModel, TokenBlocklist
 from auth.schemas import UserAccessSchema, UserLoginSchema, UserPasswordUpdateSchema, UserSchema, UserRegisterSchema, UserUpdateSchema
 
 blp = Blueprint("Users", "users", description="Operations on users")
@@ -49,7 +49,15 @@ class UserLogin(MethodView):
     
     abort(401, message="Invalid credentials.")
 
-
+@blp.route("/logout")
+class UserLogout(MethodView):
+  
+  @jwt_required()
+  @blp.response(204)
+  def post():
+    jti = get_jwt()["jti"]
+    db.session.add(TokenBlocklist(jti=jti))
+    db.session.commit()
 
 @blp.route("/change-password")
 class UserChangePassword(MethodView):

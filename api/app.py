@@ -4,13 +4,11 @@ from flask import Flask, jsonify
 from flask_smorest import Api
 from flask_jwt_extended import JWTManager
 
-from auth.models import UserModel
+from auth.models import UserModel, TokenBlocklist
 from db import db
 
 from schedule.blueprints import EpisodesBlueprint, ShowsBlueprint
 from auth.blueprints import UsersBlueprint, InvitesBlueprint
-
-
 
 def create_app(db_url=None):
   app = Flask(__name__)
@@ -55,6 +53,22 @@ def create_app(db_url=None):
     if user and user.is_admin:
       return { "is_admin": True }
     return { "is_admin": False }
+  
+  @jwt.token_in_blocklist_loader
+  def check_if_token_revoked(jwt_header, jwt_payload: dict) -> bool:
+    jti = jwt_payload["jti"]
+    token = db.session.query(TokenBlocklist.id).filter_by(jti=jti).scalar()
+    
+    return token is not None
+  
+  @jwt.revoked_token_loader
+  def revoked_token_callback(jwt_header, jwt_payload: dict):
+    return (
+      jsonify(
+        { "description": "The token has been revoked.", "error": "token_revoked"}
+      ),
+      401
+    )
 
   with app.app_context():
     import schedule.models

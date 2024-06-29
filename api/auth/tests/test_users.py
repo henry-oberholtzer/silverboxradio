@@ -194,3 +194,12 @@ def test_only_allow_user_to_adjust_profile(client: FlaskClient, register_user):
       "username": "change_that",  
     })
     assert r.status_code == 401
+
+def test_user_logout(client: FlaskClient, auth):
+  with client:
+    r = client.get("/users/2", headers=auth)
+    assert r.status_code == 200
+    z = client.post("/logout", headers=auth)
+    assert z.status_code == 204
+    r = client.get("/users/2", headers=auth)
+    assert r.status_code == 401

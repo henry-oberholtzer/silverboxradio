@@ -54,7 +54,7 @@ class UserLogout(MethodView):
   
   @jwt_required()
   @blp.response(204)
-  def post():
+  def post(self):
     jti = get_jwt()["jti"]
     db.session.add(TokenBlocklist(jti=jti))
     db.session.commit()

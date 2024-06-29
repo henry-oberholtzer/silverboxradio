@@ -2,6 +2,14 @@
 
 A website intended as a template for internet radio stations of all sizes
 
+## Features
+  - User authentication
+  - Shows with Episodes
+
+## Upcoming Features
+  - Client
+  - 
+
 # Set Up
 
 - Ensure Python3.12 is installed
@@ -25,3 +33,6 @@ pip install -r requirements.txt
 # To Run
 - Navigate to the "api" folder
 - Run `flask run`
+
+# Testing
+- Tests are written with pytest, and can be run with the `pytest` command in root folder.

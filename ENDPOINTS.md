@@ -1,10 +1,17 @@
 # Users
 GET `/users` - AUTH ONLY
   - Get all users
+  - Active
 GET `/users/<username>` - AUTH ONLY
   - Get a specific user, gets associated shows
-DELETE `/users/<username>` - ADMIN ONLY
-  - Soft deletes a user from the website
+  - Active
+DELETE `/users/<username>` - EXACT USER OR ADMIN ONLY
+  - Deletes a user from the website
+  - Active
+
+# Access
+PUT `/users/<int:user_id>/access/` - ADMIN ONLY
+  - Set whether a user is admin
 
 # Invites
 GET `/invites/` - ADMIN ONLY

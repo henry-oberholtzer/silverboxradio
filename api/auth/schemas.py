@@ -39,8 +39,12 @@ class UserUpdateSchema(UserRegisterSchema):
   is_admin = fields.Bool(required=False)
   
   class Meta:
-    exclude = ["password"]
-    
+    exclude = ["password", "is_admin"]
+
+class UserAccessSchema(UserSchema):
+  class Meta:
+    fields = ["is_admin"]
+
 class UserPublicSchema(UserSchema):
   class Meta:
     fields = ["id", "username", "is_admin"]

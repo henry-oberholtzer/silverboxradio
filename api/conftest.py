@@ -28,23 +28,6 @@ def client(app: Flask):
 def runner(app: Flask):
   return app.test_cli_runner()
 
-@pytest.fixture()
-def auth(client: FlaskClient):
-  with client:
-    client.post("/register", json={
-      "username": "user",
-      "password": "t3st_password!",
-      "email": "user@henryoberholtzer.com",
-    })
-    r = client.post("/login", json={
-      "username": "user",
-      "password": "t3st_password!",
-    })
-    token = r.get_json()["access_token"]
-    return {
-      "Authorization": f"Bearer {token}",
-    }
-
 @pytest.fixture
 def admin(client: FlaskClient):
   with client:
@@ -64,3 +47,38 @@ def admin(client: FlaskClient):
     return {
       "Authorization": f"Bearer {token}",
     }
+
+@pytest.fixture()
+def auth(client: FlaskClient):
+  with client:
+    admin = UserModel(
+      username="admin",
+      email="admin@admin.com",
+      password=pbkdf2_sha256.hash("admin"),
+      is_admin=True
+    )
+    db.session.add(admin)
+    db.session.commit()
+    result = client.post("/login", json={
+      "username": "admin",
+      "password": "admin"
+    })
+    token = result.get_json()["access_token"]
+    client.post("/invites", headers={"Authorization": f"Bearer {token}"}, json={
+      "email": "user@henryoberholtzer.com"
+    })
+    client.post("/register", json={
+      "username": "user",
+      "password": "t3st_password!",
+      "email": "user@henryoberholtzer.com",
+    })
+    r = client.post("/login", json={
+      "username": "user",
+      "password": "t3st_password!",
+    })
+    token = r.get_json()["access_token"]
+    return {
+      "Authorization": f"Bearer {token}",
+    }
+
+

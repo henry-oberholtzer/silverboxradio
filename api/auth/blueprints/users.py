@@ -5,10 +5,11 @@ from flask_smorest import Blueprint, abort
 from passlib.hash import pbkdf2_sha256
 from datetime import datetime
 from flask_jwt_extended import jwt_required
-from lib.permissions import is_user_or_admin
+from sqlalchemy import select
+from lib.permissions import admin_only, is_user_or_admin
 from db import db
-from auth.models import UserModel
-from auth.schemas import UserLoginSchema, UserPasswordUpdateSchema, UserSchema, UserRegisterSchema, UserUpdateSchema
+from auth.models import UserModel, InviteModel
+from auth.schemas import UserAccessSchema, UserLoginSchema, UserPasswordUpdateSchema, UserSchema, UserRegisterSchema, UserUpdateSchema
 
 blp = Blueprint("Users", "users", description="Operations on users")
 
@@ -17,7 +18,11 @@ class UserRegister(MethodView):
   
   @blp.arguments(UserRegisterSchema)
   def post(self, user_data):
-    
+# Checks for an invite
+    stmt= select(InviteModel).where(InviteModel.email == user_data["email"])
+    if not db.session.scalars(stmt).all():
+      abort(403, message="This email has not been invited.")
+# If an invite is found, creates the user.
     user = UserModel(
       username=user_data["username"],
       email=user_data["email"],
@@ -82,7 +87,7 @@ class User(MethodView):
   @blp.response(200, UserSchema)
   @jwt_required()
   def put(self, user_data, user_id):
-    is_user_or_admin(user_id)
+    is_admin = is_user_or_admin(user_id)
     
     user = db.get_or_404(UserModel, user_id)
     if user:
@@ -90,7 +95,24 @@ class User(MethodView):
         user.username = user_data["username"]
       if "email" in user_data:
         user.email = user_data["email"]
-      if "is_admin" in user_data:
+    else:
+      user = UserModel(id=user_id, **user_data)
+    
+    db.session.add(user)
+    db.session.commit()
+    return user
+  
+@blp.route("/users/<int:user_id>/access")
+class UserAccess(MethodView):
+
+  @blp.arguments(UserAccessSchema)
+  @blp.response(200, UserSchema)
+  @jwt_required()
+  def put(self, user_data, user_id):
+    admin_only()
+    
+    user = db.get_or_404(UserModel, user_id)
+    if user:
         user.is_admin = user_data["is_admin"]
     else:
       user = UserModel(id=user_id, **user_data)
@@ -98,4 +120,3 @@ class User(MethodView):
     db.session.add(user)
     db.session.commit()
     return user
-      

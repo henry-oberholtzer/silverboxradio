@@ -1,6 +1,7 @@
 from db import db
+from lib.models import TimestampMixin
 
-class ShowModel(db.Model):
+class ShowModel(TimestampMixin, db.Model):
   __tablename__ = "shows"
   
   id = db.Column(db.Integer, primary_key=True)

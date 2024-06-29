@@ -1,7 +1,7 @@
 from db import db
-from sqlalchemy import func
+from lib.models import TimestampMixin
 
-class InviteModel(db.Model):
+class InviteModel(TimestampMixin, db.Model):
   __tablename__ = "invites"
   
   id = db.Column(db.Integer, primary_key=True)
@@ -10,4 +10,3 @@ class InviteModel(db.Model):
     unique=False,
     nullable=False)
   owner = db.relationship("UserModel", back_populates="invites")
-  created_at = db.Column(db.DateTime, nullable=False, server_default=func.now())

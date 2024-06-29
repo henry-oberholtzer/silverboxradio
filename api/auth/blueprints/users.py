@@ -49,6 +49,8 @@ class UserLogin(MethodView):
     
     abort(401, message="Invalid credentials.")
 
+
+
 @blp.route("/change-password")
 class UserChangePassword(MethodView):
   

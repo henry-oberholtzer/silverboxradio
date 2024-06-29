@@ -1,6 +1,10 @@
 import string
 from flask.views import MethodView
-from flask_jwt_extended import create_access_token, get_jwt, get_jwt_identity
+from flask_jwt_extended import (
+  create_access_token, 
+  get_jwt,
+  create_refresh_token,
+  get_jwt_identity)
 from flask_smorest import Blueprint, abort
 from passlib.hash import pbkdf2_sha256
 from datetime import datetime
@@ -39,13 +43,17 @@ class UserLogin(MethodView):
   
   @blp.arguments(UserLoginSchema)
   def post(self, user_data):
-    user = UserModel.query.filter(
+    user: UserModel = UserModel.query.filter(
       UserModel.username == user_data["username"]
     ).first()
     
     if user and pbkdf2_sha256.verify(user_data["password"], user.password):
-      access_token = create_access_token(identity=user.id)
-      return { "access_token": access_token }, 200
+      access_token = create_access_token(identity=user.id, fresh=True)
+      refresh_token = create_refresh_token(user.id)
+      return { 
+        "access_token": access_token,
+        "refresh_token": refresh_token
+        }, 200
     
     abort(401, message="Invalid credentials.")
 
@@ -59,11 +67,23 @@ class UserLogout(MethodView):
     db.session.add(TokenBlocklist(jti=jti))
     db.session.commit()
 
+@blp.route("/refresh")
+class TokenRefresh(MethodView):
+  
+  @jwt_required(refresh=True)
+  def post(self):
+    current_user = get_jwt_identity()
+    new_token = create_access_token(identity=current_user, fresh=False)
+    jti = get_jwt()["jti"]
+    db.session.add(TokenBlocklist(jti=jti))
+    db.session.commit()
+    return { "access_token": new_token }, 200
+
 @blp.route("/change-password")
 class UserChangePassword(MethodView):
   
   @blp.arguments(UserPasswordUpdateSchema)
-  @jwt_required()
+  @jwt_required(fresh=True)
   def put(self, password_data, user_id):
     is_user_or_admin(user_id)
     return { "Not implemented" }, 501
@@ -86,7 +106,7 @@ class User(MethodView):
     return user
   
   @blp.response(204)
-  @jwt_required()
+  @jwt_required(fresh=True)
   def delete(self, user_id):
     is_user_or_admin(user_id)
     user = db.get_or_404(UserModel, user_id)
@@ -117,7 +137,7 @@ class UserAccess(MethodView):
 
   @blp.arguments(UserAccessSchema)
   @blp.response(200, UserSchema)
-  @jwt_required()
+  @jwt_required(fresh=True)
   def put(self, user_data, user_id):
     admin_only()
     

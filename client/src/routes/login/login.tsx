@@ -6,14 +6,14 @@ const Login = () => {
 
   const [password, setPassword] = useState<string>('')
 
-  const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (username && password) {
       const body: UserLoginSchema = {
         username: username,
         password: password
       }
-      const response = api.login(body)
+      const response = await api.login(body)
       console.log(response)
     }
 

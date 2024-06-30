@@ -22,12 +22,13 @@ def create_admin():
         user = UserModel(
             email=email,
             username=username,
-            password=pbkdf2_sha256(password),
+            password=pbkdf2_sha256.hash(password),
             is_admin=True)
+        print(user)
         db.session.add(user)
         db.session.commit()
-    except Exception:
-        print("Couldn't create admin user.")
+    except Exception as e:
+        print("Couldn't create admin user:", e)
 
 if __name__ == "__main__":
     cli()

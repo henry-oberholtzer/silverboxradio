@@ -3,6 +3,7 @@ import os
 from flask import Flask, jsonify
 from flask_smorest import Api
 from flask_jwt_extended import JWTManager
+from flask_cors import CORS
 
 from auth.models import UserModel, TokenBlocklist
 from db import db
@@ -22,9 +23,11 @@ def create_app(db_url=None):
   app.config["SQLALCHEMY_DATABASE_URI"] = db_url or os.getenv("DATABASE_URL", "sqlite:///sqlite.db")
   app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
   app.config["JWT_SECRET_KEY"] = "TEMPORARY"
+  app.config["CORS_HEADERS"] = "Content-Type"
   db.init_app(app)
   api = Api(app)
   jwt = JWTManager(app)
+  cores = CORS(app)
   
   @jwt.expired_token_loader
   def expired_token_callback(jwt_header, jwt_payload):

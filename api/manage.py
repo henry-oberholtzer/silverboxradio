@@ -2,6 +2,7 @@ import getpass
 from flask.cli import FlaskGroup
 
 from auth.models import UserModel
+from passlib.hash import pbkdf2_sha256
 from db import db
 from app import create_app
 
@@ -18,11 +19,15 @@ def create_admin():
         print("Passwords don't match")
         return 1
     try:
-        user = UserModel(email=email, username=username, password=password, is_admin=True)
+        user = UserModel(
+            email=email,
+            username=username,
+            password=pbkdf2_sha256(password),
+            is_admin=True)
         db.session.add(user)
         db.session.commit()
     except Exception:
         print("Couldn't create admin user.")
 
 if __name__ == "__main__":
-  cli()
+    cli()

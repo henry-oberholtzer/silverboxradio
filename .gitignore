@@ -1,4 +1,6 @@
 .venv
+.flaskenv
+.env
 __pycache__
 **/instance
 .pytest_cache

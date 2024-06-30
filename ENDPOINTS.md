@@ -9,6 +9,12 @@ DELETE `/users/<username>` - EXACT USER OR ADMIN ONLY
   - Deletes a user from the website
   - Active
 
+# Login
+
+# Logout
+
+# Register
+
 # Access
 PUT `/users/<int:user_id>/access/` - ADMIN ONLY
   - Set whether a user is admin

@@ -1,7 +1,6 @@
 from decouple import config
 
 class Config(object):
-  PROPAGATE_EXCEPTIONS = True
   API_TITLE = "Silver Box Radio"
   API_VERSION = "v1"
   OPENAPI_VERSION = "3.0.3"
@@ -16,7 +15,7 @@ class Config(object):
   SQLALCHEMY_TRACK_MODIFICATIONS = False
   CORS_HEADER = "Content-Type"
 
-class DevelopmentConfig(object):
+class DevelopmentConfig(Config):
   DEVELOPMENT = True
   DEBUG = True
 

@@ -9,10 +9,10 @@ from app import create_app
 @pytest.fixture()
 def app():
   db_url = "sqlite:///test.db"
-  app = create_app(db_url)
-  app.config.update({
-    "TESTING": True,
-  })
+  app = create_app(config="config.TestingConfig")
+  # app.config.update({
+  #   "TESTING": True,
+  # })
   with app.app_context():
     db.create_all()
     yield app

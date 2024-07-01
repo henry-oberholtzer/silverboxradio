@@ -1,7 +1,8 @@
+from datetime import datetime, timedelta, timezone
 from decouple import config
 from flask import Flask, jsonify
 from flask_smorest import Api
-from flask_jwt_extended import JWTManager
+from flask_jwt_extended import JWTManager, create_access_token, get_jwt, get_jwt_identity, set_access_cookies
 from flask_cors import CORS
 
 from auth.models import UserModel, TokenBlocklist
@@ -72,6 +73,19 @@ def create_app(db_url=None, config=config("CONFIG_OBJECT")):
       ),
       401
     )
+  
+  @app.after_request
+  def refresh_expiring_jwts(response):
+    try:
+      exp_timestamp = get_jwt()["exp"]
+      now = datetime.now(timezone.utc)
+      target_timestamp = datetime.timestamp(now + timedelta(minutes=30))
+      if target_timestamp > exp_timestamp:
+        access_token = create_access_token(identity=get_jwt_identity())
+        set_access_cookies(response, access_token)
+      return response
+    except (RuntimeError, KeyError):
+      return response
 
   with app.app_context():
     import schedule.models

@@ -1,3 +1,4 @@
+from datetime import timedelta
 from decouple import config
 
 class Config(object):
@@ -12,6 +13,10 @@ class Config(object):
   CSRF_ENABLED = True
   SQLALCHEMY_DATABASE_URI = config("DATABASE_URL")
   JWT_SECRET_KEY = config("SECRET_KEY")
+  JWT_COOKIE_SECURE = False
+  JWT_TOKEN_LOCATION = ["cookies","headers"]
+  JWT_ACCESS_TOKEN_EXPIRES = timedelta(days=1)
+  JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=30)
   SQLALCHEMY_TRACK_MODIFICATIONS = False
   CORS_HEADER = "Content-Type"
 
@@ -23,9 +28,8 @@ class TestingConfig(Config):
   TESTING = True
   DEBUG = True
   SQLALCHEMY_DATABASE_URI = "sqlite:///testdb.db"
-  BCRYPT_LOG_ROUNDS = 1
-  WTF_CSRF_ENABLED = False
-
+  
 class ProductionConfig(Config):
   DEBUG = False
   DEBUG_TB_ENABLED = False
+  JWT_COOKIE_SECURE = True

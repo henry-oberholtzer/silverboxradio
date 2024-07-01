@@ -1,8 +1,10 @@
 import string
-from flask import Response
+from flask import Response, jsonify
 from flask.views import MethodView
 from flask_jwt_extended import (
-  create_access_token, 
+  create_access_token,
+  set_access_cookies,
+  set_refresh_cookies, 
   get_jwt,
   create_refresh_token,
   get_jwt_identity)
@@ -49,12 +51,16 @@ class UserLogin(MethodView):
     ).first()
     
     if user and pbkdf2_sha256.verify(user_data["password"], user.password):
-      access_token = create_access_token(identity=user.id, fresh=True)
+      additional_claims = { "is_admin": user.is_admin }
+      access_token = create_access_token(identity=user.id, additional_claims=additional_claims, fresh=True)
       refresh_token = create_refresh_token(user.id)
-      return { 
+      response = jsonify({ 
         "access_token": access_token,
         "refresh_token": refresh_token
-        }, 200
+        })
+      set_access_cookies(response, access_token)
+      set_refresh_cookies(response, refresh_token)
+      return response, 200
     
     abort(401, message="Invalid credentials.")
 
@@ -118,7 +124,7 @@ class User(MethodView):
   @blp.response(200, UserSchema)
   @jwt_required()
   def put(self, user_data, user_id):
-    is_admin = is_user_or_admin(user_id)
+    is_user_or_admin(user_id)
     
     user = db.get_or_404(UserModel, user_id)
     if user:

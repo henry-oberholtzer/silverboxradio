@@ -5,14 +5,11 @@ from db import db
 from passlib.hash import pbkdf2_sha256
 import pytest
 from app import create_app
+from flask_jwt_extended import create_access_token
 
 @pytest.fixture()
 def app():
-  db_url = "sqlite:///test.db"
   app = create_app(config="config.TestingConfig")
-  # app.config.update({
-  #   "TESTING": True,
-  # })
   with app.app_context():
     db.create_all()
     yield app
@@ -39,32 +36,15 @@ def admin(client: FlaskClient):
     )
     db.session.add(admin)
     db.session.commit()
-    r = client.post("/login", json={
-      "username": "admin",
-      "password": "admin"
-    })
-    token = r.get_json()["access_token"]
+    token = create_access_token(admin.id)
     return {
       "Authorization": f"Bearer {token}",
     }
 
 @pytest.fixture()
-def auth(client: FlaskClient):
+def auth(client: FlaskClient, admin):
   with client:
-    admin = UserModel(
-      username="admin",
-      email="admin@admin.com",
-      password=pbkdf2_sha256.hash("admin"),
-      is_admin=True
-    )
-    db.session.add(admin)
-    db.session.commit()
-    result = client.post("/login", json={
-      "username": "admin",
-      "password": "admin"
-    })
-    token = result.get_json()["access_token"]
-    client.post("/invites", headers={"Authorization": f"Bearer {token}"}, json={
+    client.post("/invites", headers=admin, json={
       "email": "user@henryoberholtzer.com"
     })
     client.post("/register", json={

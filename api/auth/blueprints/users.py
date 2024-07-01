@@ -7,6 +7,7 @@ from flask_jwt_extended import (
   set_refresh_cookies, 
   get_jwt,
   create_refresh_token,
+  unset_jwt_cookies,
   get_jwt_identity)
 from flask_smorest import Blueprint, abort
 from passlib.hash import pbkdf2_sha256
@@ -24,6 +25,7 @@ blp = Blueprint("Users", "users", description="Operations on users")
 class UserRegister(MethodView):
   
   @blp.arguments(UserRegisterSchema)
+  @blp.response(201, UserSchema)
   def post(self, user_data):
 # Checks for an invite
     stmt= select(InviteModel).where(InviteModel.email == user_data["email"])
@@ -39,7 +41,7 @@ class UserRegister(MethodView):
     db.session.add(user)
     db.session.commit()
     
-    return {"message": "Registration successful."}, 201
+    return user
 
 @blp.route("/login")
 class UserLogin(MethodView):
@@ -68,23 +70,26 @@ class UserLogin(MethodView):
 class UserLogout(MethodView):
   
   @jwt_required()
-  @blp.response(204)
+  @blp.response(200)
   def post(self):
+    response = jsonify({ "message": "Logout successful."})
     jti = get_jwt()["jti"]
     db.session.add(TokenBlocklist(jti=jti))
     db.session.commit()
+    unset_jwt_cookies(response)
+    return response
 
-@blp.route("/refresh")
-class TokenRefresh(MethodView):
+# @blp.route("/refresh")
+# class TokenRefresh(MethodView):
   
-  @jwt_required(refresh=True)
-  def post(self):
-    current_user = get_jwt_identity()
-    new_token = create_access_token(identity=current_user, fresh=False)
-    jti = get_jwt()["jti"]
-    db.session.add(TokenBlocklist(jti=jti))
-    db.session.commit()
-    return { "access_token": new_token }, 200
+#   @jwt_required(refresh=True)
+#   def post(self):
+#     current_user = get_jwt_identity()
+#     new_token = create_access_token(identity=current_user, fresh=False)
+#     jti = get_jwt()["jti"]
+#     db.session.add(TokenBlocklist(jti=jti))
+#     db.session.commit()
+#     return { "access_token": new_token }, 200
 
 @blp.route("/change-password")
 class UserChangePassword(MethodView):
@@ -112,13 +117,15 @@ class User(MethodView):
     user = db.get_or_404(UserModel, user_id)
     return user
   
-  @blp.response(204)
+  @blp.response(200)
   @jwt_required(fresh=True)
   def delete(self, user_id):
     is_user_or_admin(user_id)
     user = db.get_or_404(UserModel, user_id)
+    response = jsonify({ "message": f"Account <{user.email}> deleted."})
     db.session.delete(user)
     db.session.commit()
+    return response
   
   @blp.arguments(UserUpdateSchema)
   @blp.response(200, UserSchema)

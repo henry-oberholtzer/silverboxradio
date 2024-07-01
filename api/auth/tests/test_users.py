@@ -137,7 +137,7 @@ def test_user_get_by_id_dne(client: FlaskClient, auth):
 def test_user_delete(client: FlaskClient, auth):
   with client:
     r = client.delete("/users/2", headers=auth)
-    assert r.status_code == 204
+    assert r.status_code == 200
 
 def test_put_user_username(client: FlaskClient, auth):
   with client:
@@ -200,6 +200,6 @@ def test_user_logout(client: FlaskClient, auth):
     r = client.get("/users/2", headers=auth)
     assert r.status_code == 200
     z = client.post("/logout", headers=auth)
-    assert z.status_code == 204
+    assert z.status_code == 200
     r = client.get("/users/2", headers=auth)
     assert r.status_code == 401

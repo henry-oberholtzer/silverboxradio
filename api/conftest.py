@@ -36,7 +36,7 @@ def admin(client: FlaskClient):
     )
     db.session.add(admin)
     db.session.commit()
-    token = create_access_token(admin.id)
+    token = create_access_token(admin.id, fresh=True)
     return {
       "Authorization": f"Bearer {token}",
     }
@@ -47,16 +47,12 @@ def auth(client: FlaskClient, admin):
     client.post("/invites", headers=admin, json={
       "email": "user@henryoberholtzer.com"
     })
-    client.post("/register", json={
+    r = client.post("/register", json={
       "username": "user",
       "password": "t3st_password!",
       "email": "user@henryoberholtzer.com",
     })
-    r = client.post("/login", json={
-      "username": "user",
-      "password": "t3st_password!",
-    })
-    token = r.get_json()["access_token"]
+    token = create_access_token(r.get_json()["id"], fresh=True)
     return {
       "Authorization": f"Bearer {token}",
     }

@@ -7,11 +7,9 @@ from flask_jwt_extended import (
   set_refresh_cookies, 
   get_jwt,
   create_refresh_token,
-  unset_jwt_cookies,
-  get_jwt_identity)
+  unset_jwt_cookies)
 from flask_smorest import Blueprint, abort
 from passlib.hash import pbkdf2_sha256
-from datetime import datetime
 from flask_jwt_extended import jwt_required
 from sqlalchemy import select
 from lib.permissions import admin_only, is_user_or_admin
@@ -78,18 +76,6 @@ class UserLogout(MethodView):
     db.session.commit()
     unset_jwt_cookies(response)
     return response
-
-# @blp.route("/refresh")
-# class TokenRefresh(MethodView):
-  
-#   @jwt_required(refresh=True)
-#   def post(self):
-#     current_user = get_jwt_identity()
-#     new_token = create_access_token(identity=current_user, fresh=False)
-#     jti = get_jwt()["jti"]
-#     db.session.add(TokenBlocklist(jti=jti))
-#     db.session.commit()
-#     return { "access_token": new_token }, 200
 
 @blp.route("/change-password")
 class UserChangePassword(MethodView):

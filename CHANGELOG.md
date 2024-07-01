@@ -4,11 +4,23 @@
   - Write tests for episodes
   - Begin auth section, refactor code to be more expandable
 
+6-28-24
+  - User authentication has been added
+  - Admin permissions have been added
+  - JWT tokens are active
+  - Permissions have been set
+
+6-29-24
+  - Client skeleton has been established
+  - Initial connection between api and client established.
+
+6-30-24
+  - Switching to config objects for Flask app
+  - Send store JWT tokens as cookies
+
 TO DO:
-  - Add user authentication
-  - Set authentication permissions and current user only permissions
-  - Set admin permissions
-  - Add "created_on" field, create a base model?
+
+
 
 DEPLOYMENT TO DO:
   - Set config to load from a config file with `str(secrets.SystemRandom().getrandbits(128))`

@@ -1,9 +1,11 @@
 import { Outlet } from "react-router-dom"
+import { Header } from "../components"
 
 const Root = () => {
   return (
     <>
-    <h1>SilverBoxRadio</h1>
+    <Header></Header>
+    <a href="/login">Login</a>
     <Outlet/>
     </>
   )

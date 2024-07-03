@@ -1,5 +1,7 @@
 type UserContext = {
   user: UserSchema | null;
-  login: (data: UserSchema) => void;
+  login: (data: UserLoginSchema) => void;
   logout: () => void;
+  message: string | null;
+  dismissMessage: () => void;
 }

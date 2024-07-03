@@ -16,6 +16,7 @@
     "@mantine/form": "^7.11.1",
     "@mantine/hooks": "^7.11.1",
     "@tabler/icons-react": "^3.8.0",
+    "axios": "^1.7.2",
     "clsx": "^2.1.1",
     "dayjs": "^1.11.11",
     "postcss-modules": "^6.0.0",

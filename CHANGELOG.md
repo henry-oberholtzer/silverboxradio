@@ -18,7 +18,20 @@
   - Switching to config objects for Flask app
   - Send store JWT tokens as cookies
 
+7-2-24
+  - Draft logo
+  - Mantine UI is being put in place
+  - User account can log in
+
 TO DO:
+  - Account login / out managed entirely by the use auth hook
+  - Switch to a library for API calls?
+  - Logout functional
+  - Add database migrations
+  - Make inviting users possible
+  - Make registration possible
+  - Make posting episodes possible
+  - Make posting shows possible
 
 
 

@@ -1,5 +1,8 @@
 import { useState } from "react"
-import { useCookies  } from "react-cookie"
+import { useCookies } from "react-cookie"
+import { PasswordInput, TextInput, Button, Container, Paper, Alert} from "@mantine/core"
+import { IconInfoCircle } from '@tabler/icons-react'
+import { useAuth } from "../../hooks"
 
 const Login = () => {
   const [username, setUsername] = useState<string>('')
@@ -7,6 +10,7 @@ const Login = () => {
   const [password, setPassword] = useState<string>('')
   const [errors, setError] =  useState<string>()
   const [,setCookie] = useCookies()
+  const { login } = useAuth()
 
   const resetForm = () => {
     setPassword("")
@@ -36,15 +40,14 @@ const Login = () => {
             setCookie('access_token_cookie', accessToken) : ""
             refreshToken ?
             setCookie('refresh_token_cookie', refreshToken) : ""
-            const data = response.json()
-            console.log(data)
+            response.json().then(data => login(data))
           }
           if (response.status === 401) {
             setError("Incorrect username or password.")
             resetForm()
           }
 
-        })
+        }).then()
       } catch (error) {
         console.error(error)
       }
@@ -52,29 +55,32 @@ const Login = () => {
 
   }
 
+  const icon = <IconInfoCircle/>
+
   return (
-    <>
-      <form onSubmit={handleFormSubmit}>
-        <label htmlFor="username">Username</label>
-        <input 
-          type="text"
-          name="username"
-          value={username} 
-          onChange={(e) => setUsername(e.target.value)}
-        ></input>
-        <label htmlFor="password">Password</label>
-        <input 
-          type="password" 
-          name="password"
-          value={password} 
-          onChange={(e) => setPassword(e.target.value)}
-        ></input>
-        <button type="submit">Login</button>
-      </form>
+    <Container size={420} my={40}>
+      <Paper withBorder shadow="md" p={30} mt={30} radius="md">
+        <form onSubmit={handleFormSubmit}>
+          <TextInput
+            label="Username"
+            value={username}
+            required 
+            onChange={(e) => setUsername(e.target.value)}
+          />
+          <PasswordInput
+            mt="md"
+            label="Password"
+            value={password}
+            required 
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <Button type="submit" fullWidth mt="xl">Login</Button>
+        </form>
+      </Paper>
       {errors && (
-        <p>{errors}</p>
+      <Alert variant="light" color="red" title={errors} icon={icon}  mt={30} withCloseButton closeButtonLabel="Dismiss" onClose={() => setError("")}/>
       )}
-    </>
+    </Container>
   )
 }
 

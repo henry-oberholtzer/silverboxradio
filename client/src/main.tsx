@@ -5,17 +5,17 @@ import {
 } from "react-router-dom"
 import { router } from './routes'
 import { CookiesProvider } from 'react-cookie'
-import { GlobalStyle, CustomThemeProvider } from './components'
+import { MantineProvider } from '@mantine/core'
 import { AuthProvider } from './hooks/useAuth'
+import '@mantine/core/styles.css'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <CookiesProvider defaultSetOptions={{ path: '/'}}>
       <AuthProvider>
-        <CustomThemeProvider>
-          <GlobalStyle/>
+        <MantineProvider>
           <RouterProvider router={router} />
-        </CustomThemeProvider>
+        </MantineProvider>
       </AuthProvider>
     </CookiesProvider>
   </React.StrictMode>

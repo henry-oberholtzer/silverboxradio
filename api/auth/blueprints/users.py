@@ -44,6 +44,7 @@ class UserRegister(MethodView):
 @blp.route("/login")
 class UserLogin(MethodView):
   
+  @blp.response(200, UserSchema)
   @blp.arguments(UserLoginSchema)
   def post(self, user_data):
     user: UserModel = UserModel.query.filter(
@@ -60,7 +61,7 @@ class UserLogin(MethodView):
         })
       set_access_cookies(response, access_token)
       set_refresh_cookies(response, refresh_token)
-      return response, 200
+      return user
     
     abort(401, message="Invalid credentials.")
 

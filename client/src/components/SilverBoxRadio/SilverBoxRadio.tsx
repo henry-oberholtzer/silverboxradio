@@ -1,18 +1,12 @@
-import styled from "styled-components";
+const SilverBoxRadio = (props: SilverBoxRadioLogoProps) => {
+  const width = props.scale ? (props.scale/100) * 306 : 306;
+  const height = props.scale ? (props.scale/100) * 24 : 24;
 
-const Container = styled.div`
-  padding: 8px;
-  width: fit-content;
-  display: flex;
-  align-items: center;`
-
-const SilverBoxRadio = () => {
   return (
-    <Container>
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        width="306"
-        height="24"
+        width={width}
+        height={height}
         version="1.1"
         viewBox="0 0 80.963 6.353"
         xmlSpace="preserve"
@@ -150,7 +144,6 @@ const SilverBoxRadio = () => {
           ></path>
         </g>
       </svg>
-    </Container>
   );
 }
 

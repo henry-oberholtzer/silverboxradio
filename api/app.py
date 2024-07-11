@@ -11,13 +11,13 @@ from db import db
 from schedule.blueprints import EpisodesBlueprint, ShowsBlueprint
 from auth.blueprints import UsersBlueprint, InvitesBlueprint
 
-def create_app(db_url=None, config=config("CONFIG_OBJECT")):
+def create_app(db_url=None, cfg=config("CONFIG_OBJECT")):
   app = Flask(__name__)
-  app.config.from_object(config)
+  app.config.from_object(cfg)
   db.init_app(app)
   api = Api(app)
   jwt = JWTManager(app)
-  cores = CORS(app)
+  cors = CORS(app, supports_credentials=True)
   
   @jwt.expired_token_loader
   def expired_token_callback(jwt_header, jwt_payload):

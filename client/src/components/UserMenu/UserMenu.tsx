@@ -6,7 +6,7 @@ import { IconChevronDown, IconLogout, IconSettings, IconRadio, IconUpload, IconC
 import classes from './UserMenu.module.css'
 
 const UserMenu = () => {
-  const { user } = useAuth()
+  const { user, logout } = useAuth()
   const [userMenuOpened, setUserMenuOpened] = useState(false);
 
   return (
@@ -74,7 +74,7 @@ const UserMenu = () => {
             <IconLogout
               style={{ width: rem(16), height: rem(16) }} stroke={1.5}/>
           }
-          onClick={() => console.log("Clicked")}>
+          onClick={() => logout()}>
             Logout
         </Menu.Item>
       </Menu.Dropdown>

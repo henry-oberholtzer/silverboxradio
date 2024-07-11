@@ -1,4 +1,5 @@
 export * from './root'
+export * from './hero'
 export * from './login'
 export * from './router'
 export * from './api'

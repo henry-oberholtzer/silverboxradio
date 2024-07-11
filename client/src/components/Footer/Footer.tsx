@@ -1,4 +1,4 @@
-import { Text, Container, ActionIcon, Group, rem} from '@mantine/core';
+import { Text, Container} from '@mantine/core';
 import { SilverBoxRadio } from '../SilverBoxRadio';
 import classes from './Footer.module.css'
 

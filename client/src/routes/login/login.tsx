@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import {
   PasswordInput,
   TextInput,
@@ -9,17 +9,25 @@ import {
 } from "@mantine/core"
 import { IconInfoCircle } from "@tabler/icons-react"
 import { useAuth } from "../../hooks"
+import { useNavigate } from "react-router-dom"
 
 const Login = () => {
   const [username, setUsername] = useState<string>("")
-
   const [password, setPassword] = useState<string>("")
-  const { login, message, dismissMessage } = useAuth()
+  const navigate = useNavigate()
+  const { login, message, dismissMessage, user } = useAuth()
 
   const resetForm = () => {
     setPassword("")
     setUsername("")
   }
+
+  useEffect(() => {
+    if (user) {
+      navigate("/")
+    }
+  }, [user])
+
 
   const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -30,6 +38,7 @@ const Login = () => {
       }
       login(body)
       resetForm()
+      
     }
   }
 

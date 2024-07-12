@@ -1,5 +1,6 @@
-import string
+import datetime
 from flask import Response, jsonify
+from flask import current_app as app
 from flask.views import MethodView
 from flask_jwt_extended import (
   create_access_token,
@@ -54,14 +55,14 @@ class UserLogin(MethodView):
     if user and pbkdf2_sha256.verify(user_data["password"], user.password):
       additional_claims = { "is_admin": user.is_admin }
       access_token = create_access_token(identity=user.id, additional_claims=additional_claims, fresh=True)
-      refresh_token = create_refresh_token(user.id)
-      response = jsonify({ 
-        "access_token": access_token,
-        "refresh_token": refresh_token
-        })
-      set_access_cookies(response, access_token)
-      set_refresh_cookies(response, refresh_token)
-      return user
+      # refresh_token = create_refresh_token(user.id)
+      response = jsonify(UserSchema().dump(user))
+      # expiration = datetime.timedelta(days=2)
+      expiration = app.config["JWT_ACCESS_TOKEN_EXPIRES"]
+      response.set_cookie("access", "1", max_age=expiration)
+      set_access_cookies(response, access_token, max_age=expiration)
+      # set_refresh_cookies(response, refresh_token, max_age=expiration)
+      return response
     
     abort(401, message="Invalid credentials.")
 

@@ -4,12 +4,13 @@ from auth.models.user import UserModel
 from db import db
 from passlib.hash import pbkdf2_sha256
 import pytest
+from decouple import config
 from app import create_app
 from flask_jwt_extended import create_access_token
 
 @pytest.fixture()
 def app():
-  app = create_app(config="config.TestingConfig")
+  app = create_app(cfg="config.TestingConfig")
   with app.app_context():
     db.create_all()
     yield app

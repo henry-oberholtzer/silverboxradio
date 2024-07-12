@@ -15,7 +15,7 @@ class Config(object):
   JWT_SECRET_KEY = config("SECRET_KEY")
   JWT_COOKIE_SECURE = False
   JWT_TOKEN_LOCATION = ["cookies","headers"]
-  JWT_ACCESS_TOKEN_EXPIRES = timedelta(days=1)
+  JWT_ACCESS_TOKEN_EXPIRES = timedelta(days=2)
   JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=30)
   SQLALCHEMY_TRACK_MODIFICATIONS = False
   CORS_HEADER = "Content-Type"

@@ -1,6 +1,8 @@
 from flask.testing import FlaskClient
 import pytest
 
+from auth.schemas import UserSchema
+
 
 @pytest.fixture
 def register_user(client: FlaskClient, admin):
@@ -117,6 +119,25 @@ def test_user_login_invalid(client: FlaskClient, register_user):
       "password": "tst_password!",
     })
     assert r.status_code == 401
+    
+def test_user_login_cookies(client: FlaskClient, register_user):
+  with client:
+    r = client.post("/login", json={
+      "username": "test",
+      "password": "t3st_password!",
+    })
+    assert client.get_cookie("access").expires == client.get_cookie("access_token_cookie").expires
+    assert r.status_code == 200
+    
+def test_user_login_data(client: FlaskClient, register_user):
+  with client:
+    username = "test"
+    r = client.post("/login", json={
+      "username": username,
+      "password": "t3st_password!",
+    })
+    user = r.get_json()
+    assert username == user["username"]
 
 def test_user_get_all(client: FlaskClient, auth):
   with client:

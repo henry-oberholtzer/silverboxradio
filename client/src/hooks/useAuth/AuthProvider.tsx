@@ -5,11 +5,12 @@ import Cookies from "universal-cookie";
 
 const AuthProvider = (props: PropsWithChildren) => {
   const [user, setUser] = useLocalStorage("user", null);
-  const [, setRefreshToken] = useLocalStorage("refresh_token_cookie", null)
   const [message, setMessage] = useState<string>("")
 
   useEffect(() => {
-    if (user != null && Date.parse(user.expiry) < Date.now()) {
+    const cookies = new Cookies()
+    console.log(cookies.get("access"))
+    if (!cookies.get("access")) {
       setUser(null)
     }
   }, [user, setUser])
@@ -26,17 +27,15 @@ const AuthProvider = (props: PropsWithChildren) => {
                 "Content-Type": "application/json",
                 "Accept": "application/json"
               },
-              body: JSON.stringify(data)
+              body: JSON.stringify(data),
+              credentials: "include"
             }).then(response => {
               if (response.ok) {
-                const cookies = new Cookies()
-                const accessToken = response.headers.get('access_token_cookie')
-                const refreshToken = response.headers.get('refresh_token_cookie')
-                cookies.set("access_token_cookie", accessToken, {
-                  path: "/",
-                  httpOnly: true,
-                }) 
-                refreshToken ? setRefreshToken(refreshToken) : ""
+                // const cookies = new Cookies()
+                // const access = response.headers.get('access')
+                // cookies.set("access", access, {
+                //   path: "/",
+                // }) 
                 response.json().then(data => setUser(data))
               }
               if (response.status === 401) {
@@ -71,7 +70,7 @@ const AuthProvider = (props: PropsWithChildren) => {
         setMessage("")
       }
     }),
-    [user, message, setMessage, setUser, setRefreshToken]
+    [user, message, setMessage, setUser,]
   );
   return <AuthContext.Provider value={value}>{props.children}</AuthContext.Provider>
 }

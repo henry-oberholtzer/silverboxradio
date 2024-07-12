@@ -19,6 +19,8 @@ class Config(object):
   JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=30)
   SQLALCHEMY_TRACK_MODIFICATIONS = False
   CORS_HEADER = "Content-Type"
+  CORS_EXPOSE_HEADERS = "Set-Cookie"
+  CORS_SUPPORTS_CREDENTIALS = True
 
 class DevelopmentConfig(Config):
   DEVELOPMENT = True

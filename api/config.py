@@ -8,15 +8,16 @@ class Config(object):
   OPENAPI_URL_PREFIX = "/"
   OPENAPI_SWAGGER_UI_PATH = "/swagger-ui"
   OPENAPI_SWAGGER_UI_URL = "https://cdn.jsdelivr.net/npm/swagger-ui-dist/"
-  DEBUG = False
+  DEBUG = True
   TESTING = False
   CSRF_ENABLED = True
   SQLALCHEMY_DATABASE_URI = config("DATABASE_URL")
   JWT_SECRET_KEY = config("SECRET_KEY")
   JWT_COOKIE_SECURE = False
-  JWT_TOKEN_LOCATION = ["cookies","headers"]
+  JWT_TOKEN_LOCATION = ["cookies"]
   JWT_ACCESS_TOKEN_EXPIRES = timedelta(days=2)
   JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=30)
+  JWT_ACCESS_COOKIE_PATH = '/'
   SQLALCHEMY_TRACK_MODIFICATIONS = False
   CORS_HEADER = "Content-Type"
   CORS_EXPOSE_HEADERS = "Set-Cookie"

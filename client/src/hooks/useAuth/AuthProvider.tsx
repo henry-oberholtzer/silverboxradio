@@ -23,19 +23,14 @@ const AuthProvider = (props: PropsWithChildren) => {
         try {
             await fetch(`${import.meta.env.VITE_BACKEND}/login`, {
               method: "POST",
+              credentials: "include",
               headers: {
                 "Content-Type": "application/json",
                 "Accept": "application/json"
               },
               body: JSON.stringify(data),
-              credentials: "include"
             }).then(response => {
               if (response.ok) {
-                // const cookies = new Cookies()
-                // const access = response.headers.get('access')
-                // cookies.set("access", access, {
-                //   path: "/",
-                // }) 
                 response.json().then(data => setUser(data))
               }
               if (response.status === 401) {
@@ -47,16 +42,19 @@ const AuthProvider = (props: PropsWithChildren) => {
           }
       },
       logout: async () => {
+        const cookies = new Cookies()
         try {
-          await fetch(`${import.meta.env.VITE_BACKEND}/logout`, {
+          const options: RequestInit = {
             method: "POST",
             credentials: "include",
             headers: {
-              "Content-Type": "application/json",
-              "Accept": "application/json"
+              'X-CSRF-TOKEN': cookies.get("csrf_access_token")
             },
-          }).then(response => {
+          }
+          await fetch(`${import.meta.env.VITE_BACKEND}/logout`, options)
+          .then(response => {
             if (response.ok) {
+              cookies.remove("access")
               setUser(null)
               console.log("Logged out.")
             }

@@ -25,12 +25,14 @@ class Config(object):
 
 class DevelopmentConfig(Config):
   DEVELOPMENT = True
+  JWT_TOKEN_LOCATION = ["cookies"]
   DEBUG = True
 
 class TestingConfig(Config):
   TESTING = True
   DEBUG = True
   SQLALCHEMY_DATABASE_URI = "sqlite:///testdb.db"
+  JWT_TOKEN_LOCATION = ["headers"]
   
 class ProductionConfig(Config):
   DEBUG = False

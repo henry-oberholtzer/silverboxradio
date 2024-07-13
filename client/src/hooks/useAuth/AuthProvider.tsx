@@ -56,7 +56,6 @@ const AuthProvider = (props: PropsWithChildren) => {
             if (response.ok) {
               cookies.remove("access")
               setUser(null)
-              console.log("Logged out.")
             }
           })
         }

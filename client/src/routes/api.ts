@@ -1,17 +1,24 @@
-const header = { 'Content-Type': 'application/json', }
+import Cookies from "universal-cookie";
 
 const apiFactory = (host: string) => {
   return (endpoint: string) => {
-    return (method: string) => {
+    return (method: "GET" | "POST") => {
         return async (
-          routeParams: string | null = null, 
-          headers: HeadersInit = { 'Content-Type': 'application/json', },
+          routeParams: string | null = null,
           body: object | null = null
         ) => {
           let url = host + endpoint;
+          const cookies = new Cookies()
+          const headers: HeadersInit = {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+            "X-CSRF-TOKEN": cookies.get("csrf_access_token")
+          }
+
           const request: RequestInit = {
             method: method,
             headers: headers,
+            credentials: 'include'
           }
           if (body) {
             request.body = JSON.stringify(body)
@@ -44,11 +51,15 @@ const apiFactory = (host: string) => {
 const base = apiFactory(import.meta.env.VITE_BACKEND + "/")
 // const users = base("/users")
 const login = base("login")("POST")
+const invitesBase = base("invites")
 // const logout = base("/logout")("POST")
 
 
 const api = {
-	login: (body: UserLoginSchema) => login(null, header, body)
+	login: (body: UserLoginSchema) => login(null, body),
+  invites: {
+    get: () => invitesBase("GET")()
+  }
 };
 
 export { api };

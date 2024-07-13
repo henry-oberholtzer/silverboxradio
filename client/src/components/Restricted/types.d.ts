@@ -1,0 +1,3 @@
+interface RestrictedProps {
+  text?: string,
+}

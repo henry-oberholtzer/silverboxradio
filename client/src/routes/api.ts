@@ -34,7 +34,7 @@ const apiFactory = (host: string) => {
               }
               const data = await response.json();
               return data;
-            } else if (response.status === 401 || response.status === 400) {
+            } else if (response.status >= 400) {
               const data = await response.json();
               return data;
             } else {
@@ -58,7 +58,8 @@ const invitesBase = base("invites")
 const api = {
 	login: (body: UserLoginSchema) => login(null, body),
   invites: {
-    get: () => invitesBase("GET")()
+    get: () => invitesBase("GET")(),
+    post: (body: InvitePostSchema) => invitesBase("POST")(null, body)
   }
 };
 

@@ -29,7 +29,7 @@ const router = createBrowserRouter([
           {
             path: "invite",
             element: <Invite/>,
-            loader: api.invites.get
+            loader: api.invites.get,
           }
         ]
       }

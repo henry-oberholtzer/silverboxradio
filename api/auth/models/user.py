@@ -1,6 +1,4 @@
 from db import db
-from sqlalchemy import func
-from sqlalchemy.orm import column_property, validates
 from lib.models import TimestampMixin
 
 class UserModel(TimestampMixin, db.Model):

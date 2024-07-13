@@ -14,7 +14,7 @@ class Config(object):
   SQLALCHEMY_DATABASE_URI = config("DATABASE_URL")
   JWT_SECRET_KEY = config("SECRET_KEY")
   JWT_COOKIE_SECURE = False
-  JWT_TOKEN_LOCATION = ["cookies"]
+  JWT_TOKEN_LOCATION = ["cookies", "headers"]
   JWT_ACCESS_TOKEN_EXPIRES = timedelta(days=2)
   JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=30)
   JWT_ACCESS_COOKIE_PATH = '/'

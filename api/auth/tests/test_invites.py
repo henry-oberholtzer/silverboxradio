@@ -48,3 +48,13 @@ def test_invite_post_close_duplicate(client: FlaskClient, admin):
     })
     print(r.get_json())
     assert r.status_code == 422
+
+def test_invite_get(client: FlaskClient, admin):
+  with client:
+    email = "email@email.com"
+    client.post("/invites", headers=admin, json={
+      "email": "email@email.com"
+    })
+    response = client.get("/invites", headers=admin).get_json()
+    assert response[0]["email"] == "email@email.com"
+    assert response[0]["created"] is not None

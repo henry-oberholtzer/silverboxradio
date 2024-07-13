@@ -25,5 +25,8 @@ class Invite(MethodView):
     db.session.commit()
     return invite
 
-  # @blp.
-  # def get(self):
+  @blp.response(200, InviteSchema(many=True))
+  @jwt_required()
+  def get(self):
+    admin = admin_only()
+    return InviteModel.query.all()

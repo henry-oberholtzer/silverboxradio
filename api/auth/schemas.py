@@ -10,15 +10,15 @@ class UserSchema(Schema):
   id = fields.Int(dump_only=True)
   username = fields.Str(required=True, validate=validate.Length(min=1, max=30))
   password = fields.Str(required=True, validate=validate.Length(min=1, max=30), load_only=True)
-  created_at = fields.DateTime(dump_only=True)
-  updated_at = fields.DateTime(dump_only=True)
+  created = fields.DateTime(dump_only=True)
+  updated = fields.DateTime(dump_only=True)
   email = fields.Email(required=True, validate=validate_user_email)
   is_admin = fields.Bool(load_default=False)
   
 
 class UserRegisterSchema(UserSchema):
   class Meta:
-    exclude = ["is_admin", "created_at"]
+    exclude = ["is_admin"]
   
   @validates("username")
   def validates_username(self, username):
@@ -63,7 +63,7 @@ class InviteSchema(Schema):
   email = fields.Email(required=True, validate=validate_invite_email)
   owner = fields.Nested(UserPublicSchema(), dump_only=True)
   owner_id = fields.Int(required=True)
-  created_at = fields.DateTime(dump_only=True)
+  created = fields.DateTime(dump_only=True)
 
 class InvitePostSchema(Schema):
   email = fields.Email(required=True, validate=validate_invite_email)

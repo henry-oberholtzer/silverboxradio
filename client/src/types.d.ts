@@ -1,3 +1,8 @@
+interface TimestampMixin {
+  created: string,
+  updated?: string,
+}
+
 interface UserLoginSchema {
   username: string,
   password: string,
@@ -14,10 +19,8 @@ interface InvitePostSchema {
   email: string,
 }
 
-interface InviteSchema {
+interface InviteSchema extends TimestampMixin {
   id: number,
   email: number,
-  created: string,
-  updated?: string,
   owner: UserSchema,
 }

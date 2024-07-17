@@ -2,9 +2,9 @@ import Cookies from "universal-cookie";
 
 const apiFactory = (host: string) => {
   return (endpoint: string) => {
-    return (method: "GET" | "POST") => {
+    return (method: "GET" | "POST" | "DELETE") => {
         return async (
-          routeParams: string | null = null,
+          routeParams: string | number | null = null,
           body: object | null = null
         ) => {
           let url = host + endpoint;
@@ -24,13 +24,13 @@ const apiFactory = (host: string) => {
             request.body = JSON.stringify(body)
           }
           if (routeParams != null) {
-            url = url + routeParams;
+            url = url + "/" + routeParams;
           }
           try {
             const response = await fetch(url, request);
             if (response.ok) {
               if (response.status === 204) {
-                return
+                return null
               }
               const data = await response.json();
               return data;
@@ -59,7 +59,8 @@ const api = {
 	login: (body: UserLoginSchema) => login(null, body),
   invites: {
     get: () => invitesBase("GET")(),
-    post: (body: InvitePostSchema) => invitesBase("POST")(null, body)
+    delete: (id: number | string) => invitesBase("DELETE")(id),
+    post: (body: object) => invitesBase("POST")(null, body)
   }
 };
 

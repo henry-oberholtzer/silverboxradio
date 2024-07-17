@@ -6,6 +6,7 @@ const Root = () => {
   return (
     <AppShell
       header={{ height: 56 }}
+      footer={{ height: 300 }}
     >
       <AppShell.Header>
         <Header />

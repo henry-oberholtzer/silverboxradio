@@ -58,3 +58,14 @@ def test_invite_get(client: FlaskClient, admin):
     response = client.get("/invites", headers=admin).get_json()
     assert response[0]["email"] == "email@email.com"
     assert response[0]["created"] is not None
+
+def test_invite_delete(client: FlaskClient, admin):
+  with client:
+    r = client.post("/invites", headers=admin, json={
+      "email": "Email@email.com"
+    })
+    delete_id = r.get_json()["id"]
+    print(delete_id)
+    response = client.delete(f"/invites/{delete_id}", headers=admin)
+    assert response.status_code == 204
+    

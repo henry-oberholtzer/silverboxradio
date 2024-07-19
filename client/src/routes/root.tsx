@@ -1,12 +1,11 @@
 import { Outlet } from "react-router-dom"
-import { Header, Footer } from "../components"
+import { Header } from "../components"
 import { AppShell } from "@mantine/core"
 
 const Root = () => {
   return (
     <AppShell
       header={{ height: 56 }}
-      footer={{ height: 300 }}
     >
       <AppShell.Header>
         <Header />
@@ -17,9 +16,9 @@ const Root = () => {
       <AppShell.Main>
         <Outlet/>
       </AppShell.Main>
-      <AppShell.Footer>
+      {/* <AppShell.Footer>
         <Footer />
-      </AppShell.Footer>
+      </AppShell.Footer> */}
     </AppShell>
   )
 }

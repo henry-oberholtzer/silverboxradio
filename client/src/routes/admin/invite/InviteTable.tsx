@@ -1,16 +1,24 @@
-import { Table, Anchor } from "@mantine/core"
+import { Table, Anchor, Pagination } from "@mantine/core"
 import { useEffect } from "react"
-import { useFetcher } from "react-router-dom"
+import { useFetcher, useSearchParams} from "react-router-dom"
 import { InviteDeleteButton } from "./InviteDeleteButton"
 
 const InviteTable = () => {
   const fetcher = useFetcher()
+  const [searchParams, setSearchParams] = useSearchParams();
 
   useEffect(() => {
     if (fetcher.state === "idle" && !fetcher.data) {
-      fetcher.load("/admin/invite")
+      if (searchParams) {
+        fetcher.load("/admin/invite?" + searchParams.toString())
+      }
+      else
+      {
+        fetcher.load("/admin/invite")
+        
+      }
     }
-  }, [fetcher])
+  }, [fetcher, searchParams])
 
   return (
     <Table.ScrollContainer minWidth={800}>
@@ -32,7 +40,7 @@ const InviteTable = () => {
         </Table.Tr>
       </Table.Thead>
       <Table.Tbody>
-        {fetcher.data && fetcher.data.map((i: InviteSchema) => {
+        {fetcher.data && fetcher.data.data.map((i: InviteSchema) => {
           const date = new Date(i.created).toLocaleDateString()
 
           return (
@@ -56,8 +64,16 @@ const InviteTable = () => {
         })}
       </Table.Tbody>
     </Table>
+    {fetcher.data && fetcher.data.pagination.total_pages > 1 &&
+    <Pagination
+      total={fetcher.data.pagination.total_pages}
+      value={fetcher.data.pagination.page}
+      onChange={(value) => {
+        setSearchParams([["page", `${value}`]]) 
+        fetcher.load(`/admin/invite?page=${value}`)
+      }}
+    />}
   </Table.ScrollContainer>
-
   )
 }
 

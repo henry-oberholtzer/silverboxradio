@@ -24,3 +24,11 @@ interface InviteSchema extends TimestampMixin {
   email: number,
   owner: UserSchema,
 }
+
+interface xPagination {
+  total: number,
+  total_pages: number,
+  first_page: number,
+  last_page: number,
+  page: number,
+}

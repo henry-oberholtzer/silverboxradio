@@ -24,7 +24,7 @@ const apiFactory = (host: string) => {
             request.body = JSON.stringify(body)
           }
           if (routeParams != null) {
-            url = url + "/" + routeParams;
+            url = url + routeParams;
           }
           try {
             const response = await fetch(url, request);
@@ -33,6 +33,15 @@ const apiFactory = (host: string) => {
                 return null
               }
               const data = await response.json();
+              const pagination = response.headers.get("X-Pagination")
+              if (pagination) {
+                const pages = JSON.parse(pagination)
+                const pageObject = {
+                  pagination: pages,
+                  data: data
+                }
+                return pageObject
+              }
               return data;
             } else if (response.status >= 400) {
               const data = await response.json();
@@ -49,8 +58,9 @@ const apiFactory = (host: string) => {
   }
 
 const base = apiFactory(import.meta.env.VITE_BACKEND + "/")
-// const users = base("/users")
+// const usersBase = base("/users")
 const login = base("login")("POST")
+const register = base("register")("POST")
 const invitesBase = base("invites")
 // const logout = base("/logout")("POST")
 
@@ -58,9 +68,12 @@ const invitesBase = base("invites")
 const api = {
 	login: (body: UserLoginSchema) => login(null, body),
   invites: {
-    get: () => invitesBase("GET")(),
-    delete: (id: number | string) => invitesBase("DELETE")(id),
+    get: (params?: string) => invitesBase("GET")(params),
+    delete: (id: number | string) => invitesBase("DELETE")("/" + id),
     post: (body: object) => invitesBase("POST")(null, body)
+  },
+  users: {
+    register: (body: object) => register(null, body)
   }
 };
 

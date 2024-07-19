@@ -1,0 +1,3 @@
+interface RedirectProps {
+  to?: string,
+}

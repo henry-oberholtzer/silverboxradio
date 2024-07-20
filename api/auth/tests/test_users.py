@@ -224,3 +224,17 @@ def test_user_logout(client: FlaskClient, auth):
     assert z.status_code == 200
     r = client.get("/users/2", headers=auth)
     assert r.status_code == 401
+
+def test_get_user_by_username(client: FlaskClient, auth):
+  with client:
+    r = client.get("/u/admin", headers=auth)
+    data = r.get_json()
+    assert r.status_code == 200
+    assert data["username"] == "admin"
+
+def test_get_user_by_username_dne(client: FlaskClient, auth):
+  with client:
+    r = client.get("/u/superuser", headers=auth)
+    data = r.get_json()
+    assert r.status_code == 404
+    assert data["description"] == "No user matches 'superuser'"

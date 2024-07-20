@@ -44,6 +44,20 @@ $ npm install
 $ npm run dev
 ```
 
+## Database Migrations
+
+In the `/api` directory:
+
+To generate migrations:
+```
+flask db migrate
+```
+
+To apply migrations:
+```
+flask db upgrade
+```
+
 ## Testing
 - Tests for the api are written with pytest, and can be run with the `pytest` command in root folder.
 

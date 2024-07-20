@@ -2,6 +2,7 @@ from datetime import datetime, timedelta, timezone
 from decouple import config
 from flask import Flask, jsonify
 from flask_smorest import Api
+from flask_migrate import Migrate
 from flask_jwt_extended import JWTManager, create_access_token, get_jwt, get_jwt_identity, set_access_cookies
 from flask_cors import CORS
 
@@ -15,6 +16,7 @@ def create_app(db_url=None, cfg=config("CONFIG_OBJECT")):
   app = Flask(__name__)
   app.config.from_object(cfg)
   db.init_app(app)
+  migrate = Migrate(app, db)
   api = Api(app)
   jwt = JWTManager(app)
   cors = CORS(app, supports_credentials=True)
@@ -87,10 +89,10 @@ def create_app(db_url=None, cfg=config("CONFIG_OBJECT")):
     except (RuntimeError, KeyError):
       return response
 
-  with app.app_context():
-    import schedule.models
-    import auth.models
-    db.create_all()
+  # with app.app_context():
+  #   import schedule.models
+  #   import auth.models
+  #   db.create_all()
 
   api.register_blueprint(ShowsBlueprint)
   api.register_blueprint(EpisodesBlueprint)

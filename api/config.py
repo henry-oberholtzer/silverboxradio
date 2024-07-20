@@ -20,7 +20,7 @@ class Config(object):
   JWT_ACCESS_COOKIE_PATH = '/'
   SQLALCHEMY_TRACK_MODIFICATIONS = False
   CORS_HEADER = "Content-Type"
-  CORS_EXPOSE_HEADERS = "Set-Cookie"
+  CORS_EXPOSE_HEADERS = ["Set-Cookie", "X-Pagination"]
   CORS_SUPPORTS_CREDENTIALS = True
 
 class DevelopmentConfig(Config):

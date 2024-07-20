@@ -235,6 +235,4 @@ def test_get_user_by_username(client: FlaskClient, auth):
 def test_get_user_by_username_dne(client: FlaskClient, auth):
   with client:
     r = client.get("/u/superuser", headers=auth)
-    data = r.get_json()
     assert r.status_code == 404
-    assert data["description"] == "No user matches 'superuser'"

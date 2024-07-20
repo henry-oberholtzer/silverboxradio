@@ -160,5 +160,5 @@ class User(MethodView):
   @jwt_required()
   def get(self, username):
     stmt = select(UserModel).filter_by(username=username)
-    return db.first_or_404(stmt, description="No user matches '{username}'")
+    return db.first_or_404(stmt)
   

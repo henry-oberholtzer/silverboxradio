@@ -13,4 +13,7 @@ class UserModel(TimestampMixin, db.Model):
     back_populates="owner",
     lazy="dynamic",
     cascade="all, delete")
+  
+  def __str__(self) -> str:
+    return f"User: {self.username}"
 

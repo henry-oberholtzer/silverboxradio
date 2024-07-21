@@ -65,7 +65,6 @@ def test_invite_delete(client: FlaskClient, admin):
       "email": "Email@email.com"
     })
     delete_id = r.get_json()["id"]
-    print(delete_id)
     response = client.delete(f"/invites/{delete_id}", headers=admin)
     assert response.status_code == 204
     

@@ -26,7 +26,7 @@ const Login = () => {
     if (user) {
       navigate("/")
     }
-  }, [user])
+  }, [navigate, user])
 
 
   const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {

@@ -15,6 +15,12 @@ interface UserSchema {
   email: string,
 }
 
+interface UserRegisterSchema {
+  username: string,
+  password: string,
+  email: string,
+}
+
 interface InvitePostSchema {
   email: string,
 }

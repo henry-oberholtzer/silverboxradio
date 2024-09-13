@@ -25,7 +25,15 @@
 
 9-12-24
   - Adding basic navigation buttons to the header
+  - Fixed tab navigation on /admin
   - Working on registration functionality
+  - Registration succeeds with invited email
+  - Errors come back for uninvited emails & take usernames
+
+9-13-24 TO DO:
+  - Handle errors from uninvited emails & taken usernames
+  - Create UI testing to alleviate the pain that is manual testing
+  - Redirect & login on successful registration
 
 TO DO:
   - Account login / out managed entirely by the use auth hook

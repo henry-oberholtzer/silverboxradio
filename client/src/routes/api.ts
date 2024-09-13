@@ -73,7 +73,7 @@ const api = {
     post: (body: object) => invitesBase("POST")(null, body)
   },
   users: {
-    register: (body: object) => register(null, body)
+    register: (body: UserRegisterSchema) => register(null, body)
   }
 };
 

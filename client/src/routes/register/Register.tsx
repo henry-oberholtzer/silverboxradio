@@ -2,6 +2,7 @@ import { useState, useEffect } from "react"
 import { IconX, IconCheck } from "@tabler/icons-react"
 import { Button, Container, Paper, PasswordInput, TextInput, Title, Text, rem, Box, Progress } from "@mantine/core"
 import { useDisclosure } from "@mantine/hooks"
+import { api } from "../api"
 
 const requirements = [
   { re: /[0-9]/, label: 'Includes number' },
@@ -99,10 +100,21 @@ const Register = () => {
   ));
   const color = strength === 100 ? 'teal' : strength > 50 ? 'yellow' : 'red';
 
+  const handleRegisterFormSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    console.log("I am submitting the form")
+    const registration = await api.users.register({
+      username: username,
+      password: password,
+      email: email
+    })
+    console.log(registration)
+  }
+
   return (
     <Container>
       <Paper withBorder shadow="md" p={30} mt={30} radius="md">
-        <form>
+        <form onSubmit={handleRegisterFormSubmit}>
           <Title order={2}>Register</Title>
           <TextInput
             mt="md"

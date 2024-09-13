@@ -43,11 +43,11 @@ const getStrength = (password: string) => {
 
 const Register = () => {
   const [username, setUsername] = useState<string>("")
-  const [usernameValidation, setUsernameValidation] = useState<boolean | null>(null)
   const [email, setEmail] = useState<string>("")
   const [password, setPassword] = useState<string>("")
   const [confirmPassword, setConfirmPassword] = useState<string>("")
   const [visible, { toggle }] = useDisclosure(false);
+  const [usernameValidation, setUsernameValidation] = useState<boolean | null>(null)
   const [passwordMatch, setPasswordMatch] = useState<boolean>(false)
   const [passwordValidation, setPasswordValidation] = useState<boolean>(false)
   const [formValidation, setFormValidation] = useState<boolean>(false)
@@ -144,7 +144,6 @@ const Register = () => {
             style={{ input: passwordMatch === true ? "outline: 2px solid green;" : "" }}
           />
           <Progress color={color} value={strength} size={5} mb="xs" mt="md" />
-          {/* <PasswordRequirement label="At least 8 characters" meets={password.length > 7} /> */}
           {checks}
           <PasswordRequirement label="Passwords match" meets={passwordMatch} />
           <Button type="submit" fullWidth mt="xl" disabled={!formValidation}>

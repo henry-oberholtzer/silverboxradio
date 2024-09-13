@@ -27,6 +27,9 @@ const router = createBrowserRouter([
           {
             path: "register",
             element: <Register/>,
+            action: async ({ request }) => {
+              console.log(request)
+            }
           },
         ]
       },

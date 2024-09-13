@@ -9,7 +9,7 @@ const AdminRoot = () => {
   const { tabValue } = useParams()
 
   if (!user) {
-    return <Navigate to="/login" />
+    return <Navigate to="auth/login" />
   }
   else if (user.is_admin === false) {
     return <Restricted />

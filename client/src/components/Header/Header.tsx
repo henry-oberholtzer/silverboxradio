@@ -9,6 +9,8 @@ const links = [
   { link: '/schedule', label: 'Schedule'},
   { link: '/hosts', label: 'Hosts'},
   { link: '/about', label: 'About'},
+  { link: '/users', label: 'Users' },
+  { link: '/auth/login', label: 'Log In'}
 ]
 
 const Header = () => {

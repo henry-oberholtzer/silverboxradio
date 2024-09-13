@@ -1,10 +1,12 @@
 import { Container, Tabs } from "@mantine/core"
-import { Navigate, Outlet } from "react-router-dom"
+import { Navigate, Outlet, useNavigate, useParams } from "react-router-dom"
 import { useAuth } from "../../hooks"
 import { Restricted } from "../../components"
 
 const AdminRoot = () => {
+  const navigate = useNavigate()
   const { user } = useAuth()
+  const { tabValue } = useParams()
 
   if (!user) {
     return <Navigate to="/login" />
@@ -15,10 +17,12 @@ const AdminRoot = () => {
 
   return (
     <Container>
-      <Tabs>
+      <Tabs
+        value={tabValue}
+        onChange={(value) => value === "dashboard" ? navigate("") : navigate(`${value}`)}>
         <Tabs.List>
           <Tabs.Tab value="dashboard">Dashboard</Tabs.Tab>
-          <Tabs.Tab value="invites">Invites</Tabs.Tab>
+          <Tabs.Tab value="invite">Invites</Tabs.Tab>
         </Tabs.List>
       </Tabs>
       <Outlet/>

@@ -161,5 +161,3 @@ class User(MethodView):
   def get(self, username):
     stmt = select(UserModel).filter_by(username=username)
     return db.first_or_404(stmt)
-  
-@blp.route("/users")

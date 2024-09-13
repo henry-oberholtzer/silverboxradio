@@ -23,6 +23,10 @@
   - Mantine UI is being put in place
   - User account can log in
 
+9-12-24
+  - Adding basic navigation buttons to the header
+  - Working on registration functionality
+
 TO DO:
   - Account login / out managed entirely by the use auth hook
   - Switch to a library for API calls?

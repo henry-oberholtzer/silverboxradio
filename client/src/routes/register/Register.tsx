@@ -52,7 +52,10 @@ const Register = () => {
   const [passwordMatch, setPasswordMatch] = useState<boolean>(false)
   const [passwordValidation, setPasswordValidation] = useState<boolean>(false)
   const [formValidation, setFormValidation] = useState<boolean>(false)
+  const [usernameErrorMessage, setUsernameErrorMessage] = useState<string>("")
+  const [emailErrorMessage, setEmailErrorMessage] = useState<string>("")
 
+// Sets password validation state
   useEffect(() => {
     if (getStrength(password) === 100) {
       setPasswordValidation(true)
@@ -68,6 +71,7 @@ const Register = () => {
     }
   }, [password, confirmPassword])
 
+// Sets username validation state
   useEffect(() => {
     if (username) {
       if (username.match(/\w+/g)) {
@@ -84,6 +88,7 @@ const Register = () => {
     }
   }, [username])
 
+// Sets overall validation
   useEffect(() => {
     if (usernameValidation && passwordValidation && passwordMatch) {
       setFormValidation(true)
@@ -108,8 +113,24 @@ const Register = () => {
       password: password,
       email: email
     })
-    console.log(registration)
-  }
+    if (registration.errors.json) {
+      const errors = registration.errors.json
+      if (errors.email) {
+        setEmailErrorMessage(errors.email.join(" "))
+      }
+      else
+      {
+        setEmailErrorMessage("")
+      }
+      if (errors.username) {
+        console.log(errors.username)
+        setUsernameErrorMessage(errors.username.join(" "))
+      }
+      else
+      {
+        setUsernameErrorMessage("")
+      }
+    }}
 
   return (
     <Container>
@@ -122,7 +143,10 @@ const Register = () => {
             value={username}
             maxLength={30}
             description="May only contain letters, numbers and underscores."
-            error={usernameValidation === false}
+            error={usernameErrorMessage
+              ? usernameErrorMessage :
+              usernameValidation === false
+            }
             required
             onChange={(e) => setUsername(e.target.value)}
           />
@@ -132,6 +156,7 @@ const Register = () => {
             value={email}
             description="Must match the email invited by the admin"
             maxLength={255}
+            error={emailErrorMessage}
             required
             onChange={(e) => setEmail(e.target.value)}
           />

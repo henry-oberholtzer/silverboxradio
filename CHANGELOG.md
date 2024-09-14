@@ -30,10 +30,13 @@
   - Registration succeeds with invited email
   - Errors come back for uninvited emails & take usernames
 
-9-13-24 TO DO:
+9-13-24:
   - Handle errors from uninvited emails & taken usernames
+  - Render error messages
+
+9-14-24 TO DO:
+  - Redirect on successful registration
   - Create UI testing to alleviate the pain that is manual testing
-  - Redirect & login on successful registration
 
 TO DO:
   - Account login / out managed entirely by the use auth hook

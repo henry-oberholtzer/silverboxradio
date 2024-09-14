@@ -1,6 +1,7 @@
 from datetime import datetime
 from marshmallow import ValidationError, fields, Schema, validate, validates
 from sqlalchemy import select
+from .models.invite import InviteModel
 from .models.user import UserModel
 import re
 from db import db
@@ -19,6 +20,12 @@ class UserSchema(Schema):
 class UserRegisterSchema(UserSchema):
   class Meta:
     exclude = ["is_admin"]
+    
+  @validates("email")
+  def validates_email(self, email):
+    stmt= select(InviteModel).where(InviteModel.email == email)
+    if not db.session.scalars(stmt).all():
+      raise ValidationError("This email has not been invited.")
   
   @validates("username")
   def validates_username(self, username):

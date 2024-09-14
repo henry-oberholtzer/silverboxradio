@@ -26,10 +26,6 @@ class UserRegister(MethodView):
   @blp.arguments(UserRegisterSchema)
   @blp.response(201, UserSchema)
   def post(self, user_data):
-# Checks for an invite
-    stmt= select(InviteModel).where(InviteModel.email == user_data["email"])
-    if not db.session.scalars(stmt).all():
-      abort(403, message="This email has not been invited.")
 # If an invite is found, creates the user.
     user = UserModel(
       username=user_data["username"],

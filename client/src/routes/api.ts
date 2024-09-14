@@ -45,7 +45,7 @@ const apiFactory = (host: string) => {
               return data;
             } else if (response.status >= 400) {
               const data = await response.json();
-              return data;
+              return data
             } else {
               throw new Error(`ERROR: ${response.status}: ${response.statusText}`)
             }

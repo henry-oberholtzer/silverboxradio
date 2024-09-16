@@ -38,7 +38,6 @@ const Header = () => {
         <Burger opened={opened} onClick={toggle} size="sm" hiddenFrom="sm" />
       </Container>
     </header>
-
   )
 }
 

@@ -1,3 +1,4 @@
+export * from './BannerNotification'
 export * from './Header'
 export * from './Theme'
 export * from './Footer'

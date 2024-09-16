@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
 import { IconX, IconCheck } from "@tabler/icons-react"
+import { useNavigate } from "react-router-dom"
 import { Button, Container, Paper, PasswordInput, TextInput, Title, Text, rem, Box, Progress } from "@mantine/core"
 import { useDisclosure } from "@mantine/hooks"
 import { api } from "../api"
@@ -54,6 +55,7 @@ const Register = () => {
   const [formValidation, setFormValidation] = useState<boolean>(false)
   const [usernameErrorMessage, setUsernameErrorMessage] = useState<string>("")
   const [emailErrorMessage, setEmailErrorMessage] = useState<string>("")
+  const navigate = useNavigate()
 
 // Sets password validation state
   useEffect(() => {
@@ -113,7 +115,7 @@ const Register = () => {
       password: password,
       email: email
     })
-    if (registration.errors.json) {
+    if (registration.errors) {
       const errors = registration.errors.json
       if (errors.email) {
         setEmailErrorMessage(errors.email.join(" "))
@@ -130,7 +132,10 @@ const Register = () => {
       {
         setUsernameErrorMessage("")
       }
-    }}
+    } else if (registration.created) {
+      navigate("/auth/login")
+    }
+  }
 
   return (
     <Container>

@@ -1,14 +1,16 @@
 import { Outlet } from "react-router-dom"
-import { Header } from "../components"
+import { GlobalBannerNotification, Header } from "../components"
 import { AppShell } from "@mantine/core"
 
 const Root = () => {
   return (
     <AppShell
-      header={{ height: 56 }}
+      withBorder={false}
+      header={{ height: 90 }}
     >
       <AppShell.Header>
         <Header />
+        <GlobalBannerNotification/>
       </AppShell.Header>
       <AppShell.Navbar>
 

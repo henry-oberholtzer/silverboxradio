@@ -1,4 +1,4 @@
-export * from './BannerNotification'
+export * from './GlobalBannerNotification'
 export * from './Header'
 export * from './Theme'
 export * from './Footer'

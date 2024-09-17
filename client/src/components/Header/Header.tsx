@@ -29,8 +29,10 @@ const Header = () => {
 
   return (
     <header className={classes.header}>
-      <Container size="md" className={classes.inner}>
-        <SilverBoxRadio/>
+      <Container fluid className={classes.inner}>
+        <Link to={"/"}>
+          <SilverBoxRadio/>
+        </Link>
         <Group gap={5} visibleFrom="sm">
           {items}
           <UserMenu/>
